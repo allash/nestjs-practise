@@ -1,0 +1,6 @@
+import { BadRequestException } from '@nestjs/common';
+export class UserAlreadyExistsException extends BadRequestException {
+    constructor(err: string) {
+        super(err);
+    }
+}

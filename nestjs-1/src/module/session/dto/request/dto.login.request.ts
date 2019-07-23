@@ -1,17 +1,9 @@
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
-export class DtoCreateUserRequest {
-
-    @IsNotEmpty()
-    firstName: string;
-
-    @IsNotEmpty()
-    age: number;
-
+export class DtoLoginRequest {
     @IsNotEmpty()
     @IsEmail()
     email: string;
-
     @IsNotEmpty()
     password: string;
 }
