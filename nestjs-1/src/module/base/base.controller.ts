@@ -1,7 +1,5 @@
-import { RolesGuard } from '../../guards/auth.guard';
+import { AuthGuard } from './../../guards/auth.guard';
 import { UseGuards } from '@nestjs/common';
 
-@UseGuards(RolesGuard)
-export class BaseController {
-
-}
+@UseGuards(AuthGuard)
+export class BaseController { }

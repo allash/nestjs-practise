@@ -1,11 +1,10 @@
 import { BaseController } from './../base/base.controller';
 import { AppConstants } from './../../config/constants';
 import { UserNamePipe } from './../../pipe/username.pipe';
-import { RolesGuard, HasRight, Authenticated } from '../../guards/auth.guard';
+import { HasRight } from '../../guards/auth.guard';
 import { UserService } from './user.service';
 import {
   Controller,
-  UseGuards,
   Get,
   Post,
   Body,

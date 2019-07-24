@@ -10,7 +10,7 @@ const METADATA_KEYS: { [key: string]: string } = {
 };
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
     constructor(private readonly reflector: Reflector) { }
 
     public canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
