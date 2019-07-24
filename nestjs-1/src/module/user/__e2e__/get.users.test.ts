@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { AppConstants } from './../../../config/constants';
 import { TestContext, getContext } from '../../../__e2e__/test.context';
 import EntityBuilder from '../../../__test__/entity.builder';
@@ -40,7 +41,7 @@ describe('User Controller', () => {
       const response = await request(context.server)
         .get(API_URL)
         .set(AppConstants.X_AUTH_TOKEN, session.token)
-        .expect(200);
+        .expect(HttpStatus.OK);
 
       expect(response.body).not.toBeUndefined();
 
