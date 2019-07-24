@@ -1,5 +1,7 @@
+import { BaseController } from './../base/base.controller';
+import { AppConstants } from './../../config/constants';
 import { UserNamePipe } from './../../pipe/username.pipe';
-import { RolesGuard, NeedRight } from '../../guards/auth.guard';
+import { RolesGuard, HasRight, Authenticated } from '../../guards/auth.guard';
 import { UserService } from './user.service';
 import {
   Controller,
@@ -17,16 +19,18 @@ import { DtoGetUsersResponse } from './dto/response/dto.get.users.response';
 import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer = require('multer');
-import { ApiUseTags } from '@nestjs/swagger';
+import { ApiUseTags, ApiImplicitHeader } from '@nestjs/swagger';
 import { Right } from '../../enum/right.enum';
 
 @Controller('users')
 @ApiUseTags('users')
-@UseGuards(RolesGuard)
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class UserController extends BaseController {
+  constructor(private readonly userService: UserService) {
+    super();
+  }
 
   @Get()
+  @ApiImplicitHeader({ name: AppConstants.X_AUTH_TOKEN, required: true, description: 'user session token' })
   async getUsers(): Promise<DtoGetUsersResponse[]> {
     return await this.userService.getUsers();
   }
@@ -48,7 +52,7 @@ export class UserController {
   }
 
   @Get('/test-right')
-  @NeedRight(Right.CAN_GET_USERS)
+  @HasRight(Right.CAN_GET_USERS)
   async testCanGetUsers(): Promise<boolean> {
     return true;
   }

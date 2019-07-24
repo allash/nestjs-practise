@@ -1,5 +1,4 @@
-import { UserModule } from './../user.module';
-import { UserService } from './../user.service';
+import { AppConstants } from './../../../config/constants';
 import { TestContext, getContext } from '../../../__e2e__/test.context';
 import EntityBuilder from '../../../__test__/entity.builder';
 import { recreateSchema } from '../../../__test__';
@@ -36,8 +35,11 @@ describe('User Controller', () => {
         ),
       );
 
+      const session = await entityBuilder.createSession(users[0]);
+
       const response = await request(context.server)
         .get(API_URL)
+        .set(AppConstants.X_AUTH_TOKEN, session.token)
         .expect(200);
 
       expect(response.body).not.toBeUndefined();

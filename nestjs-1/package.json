@@ -17,7 +17,7 @@
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
     "test-unit": "jest --testRegex src/.*/__unit__/[^/]+.test.ts",
-    "test:e2e": "jest --testRegex src/.*/__e2e__/[^/]+.test.ts",
+    "test:e2e": "jest --runInBand --testRegex src/.*/__e2e__/[^/]+.test.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
@@ -70,13 +70,13 @@
       "ts"
     ],
     "rootDir": "src",
-    "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "testRegex": "src/.*\\.test.ts",
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

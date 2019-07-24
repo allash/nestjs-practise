@@ -18,7 +18,7 @@ export class UserService {
   ) {}
 
   async getUsers(): Promise<DtoGetUsersResponse[]> {
-    const users = await this.userRepo.findAllOrderByEmail();
+    const users = await this.userRepo.find({ order: { email: 'ASC' }});
     return this.userMapper.toDtoGetUsersResponse(users);
   }
 

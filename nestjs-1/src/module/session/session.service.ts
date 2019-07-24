@@ -32,7 +32,7 @@ export class SessionService {
     session.token = token;
     session.user = user;
     session.userId = user.id;
-    this.sessionRepo.save(session);
+    await this.sessionRepo.save(session);
 
     return this.sessionMapper.toDtoLoginResponse(token);
   }

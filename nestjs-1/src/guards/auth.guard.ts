@@ -1,27 +1,36 @@
-import { CanActivate, ExecutionContext, Injectable, SetMetadata, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, SetMetadata, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { Right } from '../enum/right.enum';
+import { DtoSession } from '../shared/dto/dto.session';
 
 const METADATA_KEYS: { [key: string]: string } = {
-    needRight: 'need_right',
+    hasRight: 'has_right',
+    authenticated: 'authenticated',
+    public: 'public'
 };
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-    public rights: string[] = new Array(Right.CAN_GET_USERS);
     constructor(private readonly reflector: Reflector) { }
 
     public canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-
         const handler = context.getHandler();
+        const req = context.switchToHttp().getRequest();
+
+        const isPublic = this.reflector.get(METADATA_KEYS.public, handler);
+        if (isPublic) { return true; }
+
+        const currentSession: DtoSession = req.session;
+        if (!currentSession) {
+            throw new UnauthorizedException();
+        }
 
         const reflectNeedRight = this.reflector.get(METADATA_KEYS.needRight, handler);
 
         if (reflectNeedRight) {
-            const hasRight = this.rights.indexOf(reflectNeedRight) > -1;
+            const hasRight = currentSession.rights.indexOf(reflectNeedRight) > -1;
             if (!hasRight) {
-                throw new UnauthorizedException();
+                throw new ForbiddenException();
             }
             return true;
         }
@@ -30,4 +39,6 @@ export class RolesGuard implements CanActivate {
     }
 }
 
-export const NeedRight = (right: string) => SetMetadata(METADATA_KEYS.needRight, right);
+export const HasRight = (right: string) => SetMetadata(METADATA_KEYS.hasRight, right);
+export const Authenticated = () => SetMetadata(METADATA_KEYS.authenticated, true);
+export const Public = () => SetMetadata(METADATA_KEYS.public, true);
