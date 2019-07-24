@@ -1,3 +1,4 @@
+import { AppConstants } from './../../../config/constants';
 import { HttpStatus } from '@nestjs/common';
 import { DtoLoginRequest } from './../dto/request/dto.login.request';
 import { TestContext, getContext } from '../../../__e2e__/test.context';
@@ -5,14 +6,13 @@ import EntityBuilder from '../../../__test__/entity.builder';
 import { recreateSchema } from '../../../__test__';
 import * as request from 'supertest';
 import { DtoLoginResponse } from '../dto/response/dto.login.response';
-import { DbSession } from '../../db/entities/session.entity';
 
 describe('Session Controller', () => {
   let context: TestContext;
 
   let entityBuilder: EntityBuilder;
 
-  const API_URL = '/sessions/login';
+  const API_URL = `/${AppConstants.API_PREFIX}/sessions/login`;
 
   beforeAll(async () => {
     context = await getContext(true);

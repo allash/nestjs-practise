@@ -13,7 +13,7 @@ describe('User Controller', () => {
 
   let entityBuilder: EntityBuilder;
 
-  const API_URL = '/users';
+  const API_URL = `/${AppConstants.API_PREFIX}/users`;
 
   beforeAll(async () => {
     context = await getContext(true);

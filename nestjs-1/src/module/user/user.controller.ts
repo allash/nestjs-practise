@@ -21,7 +21,7 @@ import multer = require('multer');
 import { ApiUseTags, ApiImplicitHeader } from '@nestjs/swagger';
 import { Right } from '../../enum/right.enum';
 
-@Controller('users')
+@Controller(`${AppConstants.API_PREFIX}/users`)
 @ApiUseTags('users')
 export class UserController extends BaseController {
   constructor(private readonly userService: UserService) {

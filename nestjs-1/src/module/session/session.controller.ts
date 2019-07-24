@@ -1,3 +1,4 @@
+import { AppConstants } from './../../config/constants';
 import { DtoLoginRequest } from './dto/request/dto.login.request';
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiUseTags } from '@nestjs/swagger';
@@ -5,7 +6,7 @@ import { SessionService } from './session.service';
 import { DtoLoginResponse } from './dto/response/dto.login.response';
 import { Public } from '../../guards/auth.guard';
 
-@Controller('sessions')
+@Controller(`${AppConstants.API_PREFIX}/sessions`)
 @ApiUseTags('sessions')
 export class SessionController {
 
