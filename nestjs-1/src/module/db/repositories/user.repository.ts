@@ -8,4 +8,10 @@ export class UserRepository extends Repository<DbUser> {
             .where('u.email = :email', { email })
             .getOne();
     }
+
+    public async findAllOrderByEmail(): Promise<DbUser[]> {
+        return this.createQueryBuilder('u')
+            .orderBy('u.email', 'ASC')
+            .getMany();
+    }
 }

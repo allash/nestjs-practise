@@ -1,4 +1,4 @@
-import { UserNotFoundException } from './../../exceptions/user.not.found.exception';
+import { UserNotFoundException } from '../../exceptions/user/user.not.found.exception';
 import { UserMapper } from './user.mapper';
 import { DbUser } from './../db/entities/user.entity';
 import { UserRepository } from './../db/repositories/user.repository';
@@ -7,7 +7,7 @@ import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
 import { DtoGetUsersResponse } from './dto/response/dto.get.users.response';
 import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
 import * as bcrypt from 'bcrypt';
-import { UserAlreadyExistsException } from '../../exceptions/user.already.exists.exception';
+import { UserAlreadyExistsException } from '../../exceptions/user/user.already.exists.exception';
 
 @Injectable()
 export class UserService {
@@ -18,15 +18,14 @@ export class UserService {
   ) {}
 
   async getUsers(): Promise<DtoGetUsersResponse[]> {
-    const users = await this.userRepo.find();
-
+    const users = await this.userRepo.findAllOrderByEmail();
     return this.userMapper.toDtoGetUsersResponse(users);
   }
 
   async createUser(dto: DtoCreateUserRequest) {
 
     const existingUser = await this.userRepo.findOneByEmail(dto.email);
-    if (existingUser) { throw new UserAlreadyExistsException('user_already_exists'); }
+    if (existingUser) { throw new UserAlreadyExistsException(); }
 
     const user = new DbUser();
     user.email = dto.email;
@@ -42,6 +41,6 @@ export class UserService {
   }
 
   async testUserNotFound() {
-    throw new UserNotFoundException('user_not_found');
+    throw new UserNotFoundException();
   }
 }

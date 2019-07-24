@@ -1,4 +1,4 @@
-import { UserNotFoundException } from './../../exceptions/user.not.found.exception';
+import { UserNotFoundException } from '../../exceptions/user/user.not.found.exception';
 import { SessionMapper } from './session.mapper';
 import { UserRepository } from './../db/repositories/user.repository';
 import { SessionRepository } from './../db/repositories/session.repository';
@@ -21,10 +21,10 @@ export class SessionService {
 
   async login(dto: DtoLoginRequest) {
     const user = await this.userRepo.findOneByEmail(dto.email);
-    if (!user) { throw new UserNotFoundException('user_not_found'); }
+    if (!user) { throw new UserNotFoundException(); }
 
     const result = await bcrypt.compare(dto.password, user.password);
-    if (result === false) { throw new UserNotFoundException('user_not_found'); }
+    if (result === false) { throw new UserNotFoundException(); }
 
     const token = uuid.v4();
 

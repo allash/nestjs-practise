@@ -12,7 +12,7 @@ export class ErrorFilter implements ExceptionFilter {
 
     res.status(status).json({
       statusCode: status,
-      message: reason,
+      error: reason,
       path: req.url
     });
   }
