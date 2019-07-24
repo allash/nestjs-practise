@@ -1,5 +1,4 @@
 import { UserNamePipe } from './../../pipe/username.pipe';
-import { Right } from 'src/enum/right.enum';
 import { RolesGuard, NeedRight } from '../../guards/auth.guard';
 import { UserService } from './user.service';
 import {
@@ -19,6 +18,7 @@ import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer = require('multer');
 import { ApiUseTags } from '@nestjs/swagger';
+import { Right } from '../../enum/right.enum';
 
 @Controller('users')
 @ApiUseTags('users')
@@ -43,19 +43,19 @@ export class UserController {
   }
 
   @Get('/test-not-found')
-  async notFoundCat() {
+  async testNotFoundCat() {
     return this.userService.testUserNotFound();
   }
 
   @Get('/test-right')
   @NeedRight(Right.CAN_GET_USERS)
-  async canGetCats(): Promise<boolean> {
+  async testCanGetUsers(): Promise<boolean> {
     return true;
   }
 
-  @Get('/:catName')
+  @Get('/:username')
   @UsePipes(new UserNamePipe())
-  async getCatByName() {
+  async getUserByName() {
     return 'name';
   }
 

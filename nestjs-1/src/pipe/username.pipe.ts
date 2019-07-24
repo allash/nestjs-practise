@@ -3,8 +3,8 @@ import { PipeTransform, ArgumentMetadata, BadRequestException, Injectable } from
 @Injectable()
 export class UserNamePipe implements PipeTransform {
     transform(value: any, metadata: ArgumentMetadata) {
-        const isTrue = value === 'boris';
-        if (!isTrue) { throw new BadRequestException('user name is not boris'); }
+        const isTrue = value === 'john';
+        if (!isTrue) { throw new BadRequestException('username is not john'); }
         return value;
     }
 }

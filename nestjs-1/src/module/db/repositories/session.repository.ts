@@ -3,7 +3,7 @@ import { Repository, EntityRepository } from 'typeorm';
 
 @EntityRepository(DbSession)
 export class SessionRepository extends Repository<DbSession> {
-    public async findOneByToken(token: string): Promise<DbSession> {
+    public async findOneByToken(token: string): Promise<DbSession | undefined> {
         return this.createQueryBuilder('s')
             .where('s.token = :token', { token })
             .getOne();
