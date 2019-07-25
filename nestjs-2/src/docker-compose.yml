@@ -1,0 +1,12 @@
+postgres:
+  image: postgres:9.6.8
+  container_name: flyway_postgres
+  ports:
+    - "8002:5432"
+  volumes:
+    - postgres_data:/var/lib/postgresql
+  environment:
+    - POSTGRES_USER=flyway_demo
+    - POSTGRES_PASSWORD=flyway_demo
+    - POSTGRES_DB=flyway_demo
+  restart: always
