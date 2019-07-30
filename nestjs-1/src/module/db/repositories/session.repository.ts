@@ -8,4 +8,11 @@ export class SessionRepository extends Repository<DbSession> {
             .where('s.token = :token', { token })
             .getOne();
     }
+
+    public async findAllWithSessions(): Promise<DbSession[]> {
+        return this.createQueryBuilder('s')
+            .leftJoinAndSelect('s.user', 'user')
+            .orderBy('s.createdAt', 'DESC')
+            .getMany();
+    }
 }

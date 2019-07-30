@@ -1,8 +1,12 @@
+import { UserRoleRepository } from './repositories/user.role.repository';
 import { SessionRepository } from './repositories/session.repository';
 import { UserRepository } from './repositories/user.repository';
 import { Connection, createConnection, getConnectionOptions } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { DbConstants } from './db.constants';
+import { RoleRepository } from './repositories/role.repository';
+import { RightRepository } from './repositories/right.repository';
+import { RoleRightRepository } from './repositories/role.right.repository';
 
 export const DbProviders = [
   {
@@ -15,6 +19,30 @@ export const DbProviders = [
     provide: DbConstants.SESSION_REPOSITORY,
     useFactory: (connection: Connection) =>
       connection.getCustomRepository(SessionRepository),
+    inject: [DbConstants.DB_CONNECTION],
+  },
+  {
+    provide: DbConstants.USER_ROLE_REPOSITORY,
+    useFactory: (connection: Connection) =>
+      connection.getCustomRepository(UserRoleRepository),
+    inject: [DbConstants.DB_CONNECTION],
+  },
+  {
+    provide: DbConstants.ROLE_REPOSITORY,
+    useFactory: (connection: Connection) =>
+      connection.getCustomRepository(RoleRepository),
+    inject: [DbConstants.DB_CONNECTION],
+  },
+  {
+    provide: DbConstants.RIGHT_REPOSITORY,
+    useFactory: (connection: Connection) =>
+      connection.getCustomRepository(RightRepository),
+    inject: [DbConstants.DB_CONNECTION],
+  },
+  {
+    provide: DbConstants.ROLE_RIGHT_REPOSITORY,
+    useFactory: (connection: Connection) =>
+      connection.getCustomRepository(RoleRightRepository),
     inject: [DbConstants.DB_CONNECTION],
   },
   {

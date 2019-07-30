@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import multer = require('multer');
 import { ApiUseTags, ApiImplicitHeader } from '@nestjs/swagger';
 import { Right } from '../../enum/right.enum';
+import { RightsEnum } from '../../config/rights.enum';
 
 @Controller(`${AppConstants.API_PREFIX}/users`)
 @ApiUseTags('users')
@@ -29,6 +30,7 @@ export class UserController extends BaseController {
   }
 
   @Get()
+  @HasRight(RightsEnum.CAN_READ_USERS)
   @ApiImplicitHeader({ name: AppConstants.X_AUTH_TOKEN, required: true, description: 'user session token' })
   async getUsers(): Promise<DtoGetUsersResponse[]> {
     return await this.userService.getUsers();

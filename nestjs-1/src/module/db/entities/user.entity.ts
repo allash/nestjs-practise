@@ -1,5 +1,6 @@
 import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, OneToMany } from 'typeorm';
 import { DbSession } from './session.entity';
+import { DbUserRole } from './user.role.entity';
 
 @Entity('user')
 export class DbUser {
@@ -26,4 +27,7 @@ export class DbUser {
 
     @OneToMany(() => DbSession, session => session.user)
     public sessions: DbSession[];
+
+    @OneToMany(() => DbUserRole, (userRole) => userRole.user)
+    public userRoles: DbUserRole[];
 }
