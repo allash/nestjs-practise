@@ -1,5 +1,7 @@
 
 
+const SnakeNamingStrategy = require('typeorm-naming-strategies').SnakeNamingStrategy;
+
 const config = {
     "type": "postgres",
     "host": "localhost",
@@ -14,7 +16,8 @@ const config = {
     "migrations": ["src/migrations/**/*{.ts,.js}"],
     "cli": {
       "migrationsDir": "src/migrations"
-    }
+    },
+    "namingStrategy": new SnakeNamingStrategy()
   }
 
   if (process.env.NODE_ENV == 'test') { 

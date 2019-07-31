@@ -25,10 +25,9 @@ export class AuthGuard implements CanActivate {
             throw new UnauthorizedException();
         }
 
-        const reflectNeedRight = this.reflector.get(METADATA_KEYS.needRight, handler);
-
-        if (reflectNeedRight) {
-            const hasRight = currentSession.rights.indexOf(reflectNeedRight) > -1;
+        const reflectHasRight = this.reflector.get(METADATA_KEYS.hasRight, handler);
+        if (reflectHasRight) {
+            const hasRight = currentSession.rights.indexOf(reflectHasRight) > -1;
             if (!hasRight) {
                 throw new ForbiddenException();
             }
