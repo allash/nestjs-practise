@@ -19,8 +19,6 @@ export class AuthFilterMiddleware implements NestMiddleware {
     private readonly userRepo: UserRepository,
   ) {}
 
-  private readonly logger = new Logger(AuthFilterMiddleware.name);
-
   public async use(req: Request, res: Response, next: NextFunction) {
     const authToken: string = req.headers[AppConstants.X_AUTH_TOKEN] as string;
 
@@ -29,7 +27,6 @@ export class AuthFilterMiddleware implements NestMiddleware {
       if (session != null) {
         const user = await this.userRepo.findUserWithGrantedAuthorities(session.userId);
         if (user != null) {
-          this.logger.debug('current user: ' + user.email);
           const rights = user ? this.getRights(user) : [];
 
           // const result = await this.userRepo.find({ select: ['email'],  relations: ['userRoles', 'userRoles.role', 'userRoles.role.roleRights']});

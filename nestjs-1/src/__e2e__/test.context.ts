@@ -6,9 +6,8 @@ import { UserModule } from './../module/user/user.module';
 import { Test } from '@nestjs/testing';
 import { Connection } from 'typeorm';
 import * as express from 'express';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 class TestContext {
   public server: Express.Application = express();
@@ -16,6 +15,7 @@ class TestContext {
   public connection: Connection;
 
   public async init() {
+
     const testModule = await Test.createTestingModule({
       imports: [AppModule, UserModule, SessionModule, DbModule],
     }).compile();
@@ -25,7 +25,9 @@ class TestContext {
 
     await this.app.useGlobalPipes(new ValidationPipe()).init();
 
-    this.connection = await this.app.select(DbModule).get<Connection>(DbConstants.DB_CONNECTION);
+    this.connection = await this.app
+        .select(DbModule)
+        .get<Connection>(DbConstants.DB_CONNECTION);
 
     if (this.connection == null) {
       throw new Error(
