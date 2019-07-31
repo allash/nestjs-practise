@@ -13,7 +13,7 @@ export class UserRepository extends Repository<DbUser> {
 
   public async findUserWithGrantedAuthorities(
     id: string,
-  ): Promise<DtoUserGrantedAuthority | undefined> {
+  ): Promise<DbUser | undefined> {
     const result = await this.createQueryBuilder('u')
       .select(['u.id', 'u.email'])
       .leftJoinAndSelect('u.userRoles', 'ur')
@@ -23,7 +23,7 @@ export class UserRepository extends Repository<DbUser> {
       .where('u.id = :id', { id })
       .getOne();
 
-    return (result as any) as DtoUserGrantedAuthority;
+    return result;
   }
 
   public async findUserGrantedAuthoritiesRaw(id: string): Promise<any[]> {
@@ -55,18 +55,4 @@ export interface DtoUserRole {
   userEmail: string;
   roleName: string;
   rightName: string;
-}
-
-export interface DtoUserGrantedAuthority {
-  id: string;
-  email: string;
-  userRoles: [
-    {
-      role?: {
-        id: string;
-        name: string;
-        roleRights: [{ right?: { id: string; name: string } }];
-      };
-    }
-  ];
 }

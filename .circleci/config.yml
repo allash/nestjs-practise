@@ -1,0 +1,65 @@
+version: 2
+jobs:
+  backend_build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.16.0
+      - image: postgres:9.6.8
+        command: postgres -p 3001
+        environment:
+          - POSTGRES_USER=demo
+          - POSTGRES_PASSWORD=demo
+          - POSTGRES_DB=demo
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/nestjs-practise
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-server-{{ checksum "nestjs-1/yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-server-
+
+      - run: 
+          name: yarn install
+          command: |
+            cd nestjs-1
+            yarn install
+
+      - save_cache:
+          paths:
+            - nestjs-1/node_modules
+            - ~/.cache/yarn
+          key: v1-server-{{ checksum "nestjs-1/yarn.lock" }}
+      
+      - run: 
+          name: Build
+          command: |
+            cd nestjs-1
+            yarn tsc
+
+      - run: 
+          name: Wait for DB 
+          command: dockerize -wait tcp://localhost:8001 -timeout 1m
+
+      - run: 
+          name: Tests
+          command: |
+            cd nestjs-1
+            yarn test:e2e
+
+
+      # run tests!
+      - run: yarn test
+
+workflows:
+  version: 2
+  build: 
+    jobs: backend_build

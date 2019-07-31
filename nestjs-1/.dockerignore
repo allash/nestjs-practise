@@ -1,0 +1,9 @@
+*
+!src
+!*.js
+!*.json
+!*.sh
+!*.properties
+!*.lock
+!torm
+!config
