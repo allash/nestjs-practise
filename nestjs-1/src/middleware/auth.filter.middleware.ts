@@ -28,12 +28,8 @@ export class AuthFilterMiddleware implements NestMiddleware {
       const session = await this.sessionRepo.findOneByToken(authToken);
       if (session != null) {
         const user = await this.userRepo.findUserWithGrantedAuthorities(session.userId);
-        this.logger.debug('User: ' + (user ? user.email : 'no user'));
-
         if (user != null) {
           const rights = user ? this.getRights(user) : [];
-          this.logger.debug('Rights: ');
-          this.logger.debug(rights);
 
           // const result = await this.userRepo.find({ select: ['email'],  relations: ['userRoles', 'userRoles.role', 'userRoles.role.roleRights']});
           const currentSession: DtoSession = {
