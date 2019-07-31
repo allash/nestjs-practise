@@ -1,6 +1,5 @@
 import {
   UserRepository,
-  DtoUserGrantedAuthority,
 } from './../module/db/repositories/user.repository';
 import { AppConstants } from './../config/constants';
 import { DtoSession } from './../shared/dto/dto.session';
@@ -9,6 +8,7 @@ import { NestMiddleware, Injectable, Inject, Logger } from '@nestjs/common';
 import { DbConstants } from '../module/db/db.constants';
 import { Request, Response, NextFunction } from 'express';
 import * as _ from 'lodash';
+import { DbUser } from '../module/db/entities/user.entity';
 
 @Injectable()
 export class AuthFilterMiddleware implements NestMiddleware {
@@ -29,6 +29,7 @@ export class AuthFilterMiddleware implements NestMiddleware {
       if (session != null) {
         const user = await this.userRepo.findUserWithGrantedAuthorities(session.userId);
         if (user != null) {
+          this.logger.debug('current user: ' + user.email);
           const rights = user ? this.getRights(user) : [];
 
           // const result = await this.userRepo.find({ select: ['email'],  relations: ['userRoles', 'userRoles.role', 'userRoles.role.roleRights']});
@@ -46,7 +47,7 @@ export class AuthFilterMiddleware implements NestMiddleware {
     next();
   }
 
-  private getRights(dto: DtoUserGrantedAuthority): string[] {
+  private getRights(dto: DbUser): string[] {
     const rights = new Set<string>();
 
     dto.userRoles.forEach(e => {
