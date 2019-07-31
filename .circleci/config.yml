@@ -54,4 +54,5 @@ jobs:
 workflows:
   version: 2
   build_only: 
-    jobs: backend_build
+    jobs: 
+      - backend_build
