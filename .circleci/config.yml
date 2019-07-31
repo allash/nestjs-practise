@@ -1,4 +1,5 @@
 version: 2
+
 jobs:
   backend_build:
     docker:
@@ -49,8 +50,8 @@ jobs:
           command: |
             cd nestjs-1
             yarn test:e2e
-            
+
 workflows:
   version: 2
-  only_build: 
+  build_only: 
     jobs: backend_build
