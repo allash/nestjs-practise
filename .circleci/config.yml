@@ -26,7 +26,6 @@ jobs:
           command: |
             cd nestjs-1
             yarn install
-            sudo apt-get install postgresql-client
 
       - save_cache:
           paths:
