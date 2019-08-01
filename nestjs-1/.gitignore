@@ -393,3 +393,6 @@ dist
 package-lock.json
 yarn-error.log
 uploads/
+
+.scannerwork
+test-report.xml

@@ -47,10 +47,42 @@ jobs:
           name: Tests
           command: |
             cd nestjs-1
-            yarn test:e2e
+            yarn test:sonar
+
+      - run:
+          name: Upload to CodeCov
+          command: cd nestjs-1 && ./run.codecov.sh
+      
+      - persist_to_workspace:
+          root: ~/nestjs-practise
+          paths:
+            - nestjs-1
+          
+  backend_sonar:
+    docker: 
+      - image: newtmitch/sonar-scanner
+    
+    working_directory: ~/nestjs-practise
+
+    steps:
+      - run: |
+          cd /home
+          mkdir circleci
+          cd circleci
+          mkdir nestjs-practise
+
+      - attach_workspace:
+          at: /home/circleci/nestjs-practise
+
+      - run: |
+          cd /home/circleci/nestjs-practise/nestjs-1
+          ./run.sonar.sh
 
 workflows:
   version: 2
   build_only: 
     jobs: 
       - backend_build
+      - backend_sonar:
+          requires:
+            - backend_build

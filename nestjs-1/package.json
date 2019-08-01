@@ -22,7 +22,8 @@
     "test:e2e": "jest --ci --runInBand --forceExit --detectOpenHandles --testRegex src/.*/__e2e__/[^/]+.test.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:sonar": "env TZ='Europe/Berlin' jest --coverage --ci --runInBand --forceExit --detectOpenHandles --testResultsProcessor=\"./node_modules/jest-sonar-reporter\" --coverageReporters=lcov --collectCoverage true --coverageDirectory coverage"
   },
   "dependencies": {
     "@nestjs/common": "^6.0.4",
@@ -56,6 +57,7 @@
     "@types/uuid": "^3.4.5",
     "concurrently": "^4.1.0",
     "jest": "24.7.1",
+    "jest-sonar-reporter": "^2.0.0",
     "nodemon": "^1.19.1",
     "prettier": "1.17.0",
     "supertest": "4.0.2",
@@ -68,17 +70,21 @@
     "wait-on": "^3.2.0"
   },
   "jest": {
+    "setupFiles": [
+      "./jest-setup.js"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",
       "ts"
     ],
-    "rootDir": "src",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "src/**/*.{js,ts}",
+      "!src/main.ts",
+      "!src/migrations/**/*"
     ],
     "testRegex": "src/.*\\.test.ts",
     "coverageDirectory": "../coverage",
