@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -11,8 +10,11 @@
     "baseUrl": "./",
     "incremental": true,
     "strict": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "allowJs": true
   },
-  "exclude": ["node_modules", "dist"],
-  "exec": "ts-node -r tsconfig-paths/register src/main.ts"
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": ["node_modules"]
 }

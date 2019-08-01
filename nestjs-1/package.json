@@ -19,7 +19,7 @@
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
     "test-unit": "jest --testRegex src/.*/__unit__/[^/]+.test.ts",
-    "test:e2e": "jest --runInBand --testRegex src/.*/__e2e__/[^/]+.test.ts",
+    "test:e2e": "jest --ci --runInBand --forceExit --detectOpenHandles --testRegex src/.*/__e2e__/[^/]+.test.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"

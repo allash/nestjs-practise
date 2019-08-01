@@ -1,5 +1,3 @@
-
-
 const SnakeNamingStrategy = require('typeorm-naming-strategies').SnakeNamingStrategy;
 
 const config = {
@@ -22,7 +20,6 @@ const config = {
 
   if (process.env.NODE_ENV == 'test') { 
     config.schema = "test";
-    config.synchronize = true;
     config.migrationsRun = false;
   }
 
