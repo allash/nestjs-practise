@@ -3201,7 +3201,7 @@ lodash@4.17.14:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.14.tgz#9ce487ae66c96254fe20b599f21b6816028078ba"
   integrity sha512-mmKYbW3GLuJeX+iGP+Y7Gp1AiGHGbXHCOh/jZmrawMmsE7MS4znI3RL2FsjbqOyMayHInjOeykW7PEajUk1/xw==
 
-lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.13:
+lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.5:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
@@ -4977,6 +4977,13 @@ ts-jest@24.0.2:
     resolve "1.x"
     semver "^5.5"
     yargs-parser "10.x"
+
+ts-mockito@^2.3.1:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/ts-mockito/-/ts-mockito-2.4.2.tgz#e3b383a3cbfbf5225dff7365d98ddc32af75b846"
+  integrity sha512-3AqLVXxjfdwlo2eC+xrzFsc5rsPtKBBhJZAnxWmyBmgT/PC+K26RIxiT2QLKcqjcJqZnuGZkwfPMx2gN31lFnw==
+  dependencies:
+    lodash "^4.17.5"
 
 ts-node@^8.1.0:
   version "8.3.0"
