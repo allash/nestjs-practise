@@ -1,1 +1,1 @@
-web: cd nestjs-1 && yarn start:prod
+web: yarn start:prod
