@@ -1,7 +1,7 @@
 import { BaseController } from './../base/base.controller';
 import { AppConstants } from './../../config/constants';
 import { UserNamePipe } from './../../pipe/username.pipe';
-import { HasRight } from '../../guards/auth.guard';
+import { HasRight, Public } from '../../guards/auth.guard';
 import { UserService } from './user.service';
 import {
   Controller,
@@ -36,6 +36,7 @@ export class UserController extends BaseController {
     return await this.userService.getUsers();
   }
 
+  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createUser(@Body() dto: DtoCreateUserRequest) {
