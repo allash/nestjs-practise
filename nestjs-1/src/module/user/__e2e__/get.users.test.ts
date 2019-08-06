@@ -82,7 +82,7 @@ describe('User Controller', () => {
       }
     });
 
-    it.skip('expects 403 when user does not have rights', async () => {
+    it('expects 403 when user does not have rights', async () => {
       const ctx = await validContext();
 
       await request(context.server)
