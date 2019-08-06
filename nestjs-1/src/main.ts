@@ -23,7 +23,7 @@ async function bootstrap() {
 
   // init cors
   const corsOptions: CorsOptions = {
-    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-xsrf-token', 'x-auth-token'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Access-Control-Allow-Origin', 'Content-Type', 'Accept', 'x-xsrf-token', 'x-auth-token'],
     credentials: true,
     methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
     origin: ['*'],
