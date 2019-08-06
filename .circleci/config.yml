@@ -95,35 +95,37 @@ jobs:
       
       - setup_remote_docker
       
-      - run: |
+      - run: 
+          name: Deploying
+          command: |
 
-          cd /home/circleci/nestjs-practise
-          wget "https://cli-assets.heroku.com/heroku-linux-x64.tar.gz"
-          tar xzf heroku-linux-x64.tar.gz
-          HEROKU="/home/circleci/nestjs-practise/heroku/bin/heroku"
+            cd /home/circleci/nestjs-practise
+            wget "https://cli-assets.heroku.com/heroku-linux-x64.tar.gz"
+            tar xzf heroku-linux-x64.tar.gz
+            HEROKU="/home/circleci/nestjs-practise/heroku/bin/heroku"
 
-          echo "Build docker"
-          cd nestjs-1 && docker build -t nestjs_server .
+            echo "Build docker"
+            cd nestjs-1 && docker build -t nestjs_server .
 
-          export HEROKU_APP=""
-          [[ "${CIRCLE_BRANCH}" == "master" ]] && export HEROKU_APP="nestjs-1"
-          [[ "${CIRCLE_BRANCH}" == "staging" ]] && export HEROKU_APP="staging-nestjs-1"
+            export HEROKU_APP=""
+            [[ "${CIRCLE_BRANCH}" == "master" ]] && export HEROKU_APP="nestjs-1"
+            [[ "${CIRCLE_BRANCH}" == "staging" ]] && export HEROKU_APP="staging-nestjs-1"
 
-          if [[ ! -z "$HEROKU_APP" ]]; then
+            if [[ ! -z "$HEROKU_APP" ]]; then
 
-            echo "Will deploy to $HEROKU_APP"
-            docker tag nestjs_server registry.heroku.com/$HEROKU_APP/web
+              echo "Will deploy to $HEROKU_APP"
+              docker tag nestjs_server registry.heroku.com/$HEROKU_APP/web
 
-            echo "container login"
-            $HEROKU container:login
+              echo "container login"
+              $HEROKU container:login
 
-            echo "docker push"
-            docker push registry.heroku.com/$HEROKU_APP/web
-              
-            echo "container release"
-            $HEROKU container:release web 
+              echo "docker push"
+              docker push registry.heroku.com/$HEROKU_APP/web
+                
+              echo "container release"
+              $HEROKU container:release web 
 
-          fi
+            fi
 
 workflows:
   version: 2
