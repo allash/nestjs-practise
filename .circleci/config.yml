@@ -105,8 +105,8 @@ jobs:
           tar xzf heroku-linux-x64.tar.gz
           HEROKU="/home/circleci/nestjs-practise/heroku/bin/heroku"
 
-          git pull https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master
-          git subtree push --prefix nestjs-1 https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master -f
+          git pull https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master --allow-unrelated-histories
+          git subtree push --prefix nestjs-1 https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master 
 
 workflows:
   version: 2
