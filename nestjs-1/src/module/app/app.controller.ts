@@ -11,6 +11,7 @@ export class AppController extends BaseController {
   @Public()
   @Get('/ping')
   ping(): string {
-    return 'pong from circleci master and staging!';
+    const stage = process.env.STAGE;
+    return 'pong from circleci: ' + stage;
   }
 }

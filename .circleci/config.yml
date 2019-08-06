@@ -87,9 +87,6 @@ jobs:
 
     working_directory: ~/nestjs-practise
 
-    environment:
-      HEROKU_APP: "nestjs-1"
-
     steps: 
       - checkout 
       
@@ -108,17 +105,25 @@ jobs:
           echo "Build docker"
           cd nestjs-1 && docker build -t nestjs_server .
 
-          echo "Will deploy to $HEROKU_APP"
-          docker tag nestjs_server registry.heroku.com/$HEROKU_APP/web
+          export HEROKU_APP=""
+          [[ "${CIRCLE_BRANCH}" == "master" ]] && export HEROKU_APP="nestjs-1"
+          [[ "${CIRCLE_BRANCH}" == "staging" ]] && export HEROKU_APP="staging-nestjs-1"
 
-          echo "container login"
-          $HEROKU container:login
+          if [[ ! -z "$HEROKU_APP" ]]; then
 
-          echo "docker push"
-          docker push registry.heroku.com/$HEROKU_APP/web
-            
-          echo "container release"
-          $HEROKU container:release web 
+            echo "Will deploy to $HEROKU_APP"
+            docker tag nestjs_server registry.heroku.com/$HEROKU_APP/web
+
+            echo "container login"
+            $HEROKU container:login
+
+            echo "docker push"
+            docker push registry.heroku.com/$HEROKU_APP/web
+              
+            echo "container release"
+            $HEROKU container:release web 
+
+          fi
 
 workflows:
   version: 2
@@ -133,5 +138,6 @@ workflows:
             branches: 
               only: 
                 - master
+                - staging
           requires:
             - backend_build
