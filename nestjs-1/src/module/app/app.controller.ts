@@ -11,6 +11,6 @@ export class AppController extends BaseController {
   @Public()
   @Get('/ping')
   ping(): string {
-    return 'pong from circleci master';
+    return 'pong from circleci master!';
   }
 }
