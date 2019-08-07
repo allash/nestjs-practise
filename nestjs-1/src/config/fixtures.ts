@@ -77,6 +77,11 @@ export class Fixtures {
     const userWithEmptyRole = await builder.createUser('user-empty-role@mail.com', '1234', 'UserWithEmptyRole');
     await builder.createUserRole(userWithEmptyRole, roleWithoutRights);
 
+    // create invoices
+    for (let i = 0; i < 10; i++) {
+      await builder.createInvoice(admin, i * 10);
+    }
+
     // create sessions
     await builder.createSession(superAdmin);
     await builder.createSession(admin);

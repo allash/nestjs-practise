@@ -1,3 +1,4 @@
+import { DbInvoice } from './invoice.entity';
 import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, OneToMany } from 'typeorm';
 import { DbSession } from './session.entity';
 import { DbUserRole } from './user.role.entity';
@@ -27,6 +28,9 @@ export class DbUser {
 
     @OneToMany(() => DbSession, session => session.user)
     public sessions: DbSession[];
+
+    @OneToMany(() => DbInvoice, invoice => invoice.user)
+    public invoices: DbInvoice[];
 
     @OneToMany(() => DbUserRole, (userRole) => userRole.user)
     public userRoles: DbUserRole[];

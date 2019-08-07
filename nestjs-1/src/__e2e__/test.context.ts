@@ -1,3 +1,4 @@
+import { InvoiceModule } from './../module/invoice/invoice.module';
 import { AppModule } from './../module/app/app.module';
 import { DbConstants } from './../module/db/db.constants';
 import { DbModule } from './../module/db/db.module';
@@ -17,7 +18,7 @@ class TestContext {
   public async init() {
 
     const testModule = await Test.createTestingModule({
-      imports: [AppModule, UserModule, SessionModule, DbModule],
+      imports: [AppModule, UserModule, SessionModule, DbModule, InvoiceModule],
     }).compile();
 
     const expressAdapter = new ExpressAdapter(this.server);

@@ -19,7 +19,6 @@ import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer = require('multer');
 import { ApiUseTags, ApiImplicitHeader } from '@nestjs/swagger';
-import { Right } from '../../enum/right.enum';
 import { RightsEnum } from '../../config/rights.enum';
 
 @Controller(`${AppConstants.API_PREFIX}/users`)
@@ -53,7 +52,7 @@ export class UserController extends BaseController {
   }
 
   @Get('/test-right')
-  @HasRight(Right.CAN_GET_USERS)
+  @HasRight(RightsEnum.CAN_READ_USERS)
   async testCanGetUsers(): Promise<boolean> {
     return true;
   }
