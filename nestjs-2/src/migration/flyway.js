@@ -1,6 +1,6 @@
 module.exports = {
     flywayArgs: {
-        url: 'jdbc:postgresql://localhost:8002/flyway_demo',
+        url: 'jdbc:postgresql://localhost:7001/flyway_demo',
         schemas: 'public',
         locations: 'filesystem:src/migration/sql',
         user: 'flyway_demo',

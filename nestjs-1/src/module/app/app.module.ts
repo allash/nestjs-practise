@@ -1,3 +1,4 @@
+import { InvoiceModule } from './../invoice/invoice.module';
 import { DbConstants } from './../db/db.constants';
 import { Fixtures } from './../../config/fixtures';
 import { AppController } from './app.controller';
@@ -12,7 +13,7 @@ import { Connection } from 'typeorm';
 
 @Module({
   controllers: [AppController],
-  imports: [TypeOrmModule.forRoot(), UserModule, DbModule, SessionModule],
+  imports: [TypeOrmModule.forRoot(), UserModule, DbModule, InvoiceModule, SessionModule],
 })
 export class AppModule implements NestModule {
 

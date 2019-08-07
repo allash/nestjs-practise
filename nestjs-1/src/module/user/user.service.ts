@@ -17,31 +17,24 @@ export class UserService {
     private readonly userMapper: UserMapper,
   ) {}
 
-  private logger = new Logger(UserService.name);
-
   async getUsers(): Promise<DtoGetUsersResponse[]> {
-    const users = await this.userRepo.find({ order: { email: 'ASC' }});
+    const users = await this.userRepo.find({ order: { email: 'ASC' } });
     return this.userMapper.toDtoGetUsersResponse(users);
   }
 
   async createUser(dto: DtoCreateUserRequest) {
-    this.logger.debug('In create user...');
     const existingUser = await this.userRepo.findOneByEmail(dto.email);
-    if (existingUser) { throw new UserAlreadyExistsException(); }
+    if (existingUser) {
+      throw new UserAlreadyExistsException();
+    }
 
-    this.logger.debug('Creating new user...');
     const user = new DbUser();
     user.email = dto.email;
     user.password = await bcrypt.hash(dto.password, 10);
     user.firstName = dto.firstName;
     user.age = dto.age;
 
-    this.logger.debug(user);
-    try {
-      await this.userRepo.save(user);
-    } catch (e) {
-      this.logger.debug(e);
-    }
+    await this.userRepo.save(user);
   }
 
   async testForbidden() {

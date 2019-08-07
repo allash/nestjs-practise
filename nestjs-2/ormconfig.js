@@ -3,7 +3,7 @@
 const config = {
     "type": "postgres",
     "host": "localhost",
-    "port": 8002,
+    "port": 7001,
     "username": "flyway_demo",
     "password": "flyway_demo",
     "database": "flyway_demo",

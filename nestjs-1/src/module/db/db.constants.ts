@@ -5,5 +5,6 @@ export const DbConstants = {
     ROLE_REPOSITORY: 'RoleRepository',
     RIGHT_REPOSITORY: 'RightRepository',
     USER_ROLE_REPOSITORY: 'UserRoleRepository',
-    ROLE_RIGHT_REPOSITORY: 'RoleRightRepository'
+    ROLE_RIGHT_REPOSITORY: 'RoleRightRepository',
+    INVOICE_REPOSITORY: 'InvoiceRepository'
 };

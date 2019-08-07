@@ -20,7 +20,8 @@ const config = {
   }
 
   if (process.env.NODE_ENV == 'test') { 
-    config.schema = "test";
+    const workerId = process.env.JEST_WORKER_ID;
+    config.schema = workerId ? 'test_' + workerId : 'test';  
     config.migrationsRun = false;
   }
 

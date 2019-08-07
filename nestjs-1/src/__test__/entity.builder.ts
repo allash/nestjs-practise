@@ -1,3 +1,4 @@
+import { DbInvoice } from './../module/db/entities/invoice.entity';
 import { Connection, Repository } from 'typeorm';
 import { DbUser } from '../module/db/entities/user.entity';
 import { Inject } from '@nestjs/common';
@@ -18,6 +19,7 @@ export default class EntityBuilder {
     public userRoleRepo: Repository<DbUserRole>;
     public rightRepo: Repository<DbRight>;
     public roleRightRepo: Repository<DbRoleRight>;
+    public invoiceRepo: Repository<DbInvoice>;
 
     constructor(@Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection) {
         this.userRepo = this.connection.getRepository(DbUser);
@@ -26,6 +28,7 @@ export default class EntityBuilder {
         this.userRoleRepo = this.connection.getRepository(DbUserRole);
         this.rightRepo = this.connection.getRepository(DbRight);
         this.roleRightRepo = this.connection.getRepository(DbRoleRight);
+        this.invoiceRepo = this.connection.getRepository(DbInvoice);
     }
 
     public async createUser(email: string, password: string, firstName: string = 'random', age: number = 99): Promise<DbUser> {
@@ -73,6 +76,14 @@ export default class EntityBuilder {
         roleRight.right = right;
         roleRight.rightId = right.id;
         return await this.roleRightRepo.save(roleRight);
+    }
+
+    public async createInvoice(user: DbUser, priceGross: number = 100): Promise<DbInvoice> {
+        const invoice = new DbInvoice();
+        invoice.priceGross = priceGross;
+        invoice.user = user;
+        invoice.userId = user.id;
+        return await this.invoiceRepo.save(invoice);
     }
 
     public static async create(connection: Connection): Promise<EntityBuilder> {

@@ -7,6 +7,7 @@ import { DbConstants } from './db.constants';
 import { RoleRepository } from './repositories/role.repository';
 import { RightRepository } from './repositories/right.repository';
 import { RoleRightRepository } from './repositories/role.right.repository';
+import { InvoiceRepository } from './repositories/invoice.repository';
 
 export const DbProviders = [
   {
@@ -43,6 +44,12 @@ export const DbProviders = [
     provide: DbConstants.ROLE_RIGHT_REPOSITORY,
     useFactory: (connection: Connection) =>
       connection.getCustomRepository(RoleRightRepository),
+    inject: [DbConstants.DB_CONNECTION],
+  },
+  {
+    provide: DbConstants.INVOICE_REPOSITORY,
+    useFactory: (connection: Connection) =>
+      connection.getCustomRepository(InvoiceRepository),
     inject: [DbConstants.DB_CONNECTION],
   },
   {
