@@ -1,3 +1,4 @@
+import { RedisConstants } from './../module/redis/redis.constants';
 import { InvoiceModule } from './../module/invoice/invoice.module';
 import { AppModule } from './../module/app/app.module';
 import { DbConstants } from './../module/db/db.constants';
@@ -7,24 +8,28 @@ import { UserModule } from './../module/user/user.module';
 import { Test } from '@nestjs/testing';
 import { Connection } from 'typeorm';
 import * as express from 'express';
-import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import { RedisModule } from '../module/redis/redis.module';
 
 class TestContext {
   public server: Express.Application = express();
   public app: INestApplication;
   public connection: Connection;
+  public redisClient: any;
 
   public async init() {
 
     const testModule = await Test.createTestingModule({
-      imports: [AppModule, UserModule, SessionModule, DbModule, InvoiceModule],
+      imports: [AppModule, UserModule, SessionModule, DbModule, InvoiceModule, RedisModule],
     }).compile();
 
     const expressAdapter = new ExpressAdapter(this.server);
     this.app = testModule.createNestApplication(expressAdapter);
 
     await this.app.useGlobalPipes(new ValidationPipe()).init();
+
+    this.redisClient = await this.app.select(RedisModule).get(RedisConstants.REDIS_CONNECTION);
 
     this.connection = await this.app
         .select(DbModule)
@@ -40,6 +45,7 @@ class TestContext {
   public async tearDown() {
     if (this.connection) { await this.connection.close(); }
     if (this.app) { await this.app.close(); }
+    if (this.redisClient) { await this.redisClient.quit(); }
   }
 }
 

@@ -1,3 +1,6 @@
+import { SessionModule } from './../../session/session.module';
+import { SessionService } from './../../session/session.service';
+import { flushRedis } from './../../../__test__/utilities';
 import { AppConstants } from './../../../config/constants';
 import { HttpStatus } from '@nestjs/common';
 import { TestContext, getContext } from '../../../__e2e__/test.context';
@@ -6,21 +9,23 @@ import { recreateSchema } from '../../../__test__';
 import * as request from 'supertest';
 import { DtoCreateUserRequest } from '../dto/request/dto.create.user.request';
 import { DbUser } from '../../db/entities/user.entity';
-import { DbSession } from '../../db/entities/session.entity';
 
 describe('User Controller', () => {
   let context: TestContext;
 
   let entityBuilder: EntityBuilder;
 
+  let sessionService: SessionService;
+
   const API_URL = `/${AppConstants.API_PREFIX}/users`;
 
   beforeAll(async () => {
     context = await getContext(true);
+    sessionService = context.app.select(SessionModule).get<SessionService>(SessionService);
   });
 
   beforeEach(async () => {
-    await Promise.all([recreateSchema(context.connection)]);
+    await Promise.all([recreateSchema(context.connection), flushRedis(context.app)]);
     entityBuilder = await EntityBuilder.create(context.connection);
   });
 
@@ -30,13 +35,16 @@ describe('User Controller', () => {
 
   class AuthContext {
     user: DbUser;
-    session: DbSession;
+    authToken: string;
     body: DtoCreateUserRequest;
   }
 
   const validContext = async (): Promise<AuthContext> => {
-    const user = await entityBuilder.createUser('test@mail.com', '12345');
-    const session = await entityBuilder.createSession(user);
+    const userRequest = { email: 'test@mail.com', password: '1234' };
+
+    const user = await entityBuilder.createUser(userRequest.email, userRequest.password);
+
+    const authToken = (await sessionService.login(userRequest)).token;
 
     const body: DtoCreateUserRequest = {
       firstName: 'Michael',
@@ -45,7 +53,7 @@ describe('User Controller', () => {
       password: '134'
     };
 
-    return { user, session, body };
+    return { user, authToken, body };
   };
 
   describe('POST - ' + API_URL, () => {
@@ -54,7 +62,7 @@ describe('User Controller', () => {
 
       await request(context.server)
         .post(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.session.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authToken)
         .send(ctx.body)
         .expect(HttpStatus.CREATED);
 
@@ -72,7 +80,7 @@ describe('User Controller', () => {
 
       await request(context.server)
         .post(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.session.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authToken)
         .send(ctx.body)
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -83,7 +91,7 @@ describe('User Controller', () => {
 
       await request(context.server)
         .post(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.session.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authToken)
         .send(ctx.body)
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -94,7 +102,7 @@ describe('User Controller', () => {
 
       await request(context.server)
         .post(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.session.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authToken)
         .send(ctx.body)
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -105,7 +113,7 @@ describe('User Controller', () => {
 
       await request(context.server)
         .post(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.session.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authToken)
         .send(ctx.body)
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -116,7 +124,7 @@ describe('User Controller', () => {
 
       await request(context.server)
         .post(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.session.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authToken)
         .send(ctx.body)
         .expect(HttpStatus.BAD_REQUEST);
     });

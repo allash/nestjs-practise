@@ -1,3 +1,4 @@
+import { SessionService } from './../session/session.service';
 import { InvoiceModule } from './../invoice/invoice.module';
 import { DbConstants } from './../db/db.constants';
 import { Fixtures } from './../../config/fixtures';
@@ -10,17 +11,19 @@ import { LoggerMiddleware } from '../../middleware/logger.middleware';
 import { Module, NestModule, MiddlewareConsumer, Inject } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
+import { RedisModule } from '../redis/redis.module';
+import { RedisService } from '../redis/redis.service';
 
 @Module({
   controllers: [AppController],
-  imports: [TypeOrmModule.forRoot(), UserModule, DbModule, InvoiceModule, SessionModule],
+  imports: [TypeOrmModule.forRoot(), UserModule, DbModule, InvoiceModule, SessionModule, RedisModule],
 })
 export class AppModule implements NestModule {
 
   public async onModuleInit() {
     if (process.env.FIXTURES === 'true') {
       const fixtures = new Fixtures();
-      await fixtures.run(this.connection);
+      await fixtures.run(this.connection, this.redisService);
     }
   }
 
@@ -29,5 +32,5 @@ export class AppModule implements NestModule {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 
-  constructor(@Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection) { }
+  constructor(@Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection, private redisService: RedisService) { }
 }
