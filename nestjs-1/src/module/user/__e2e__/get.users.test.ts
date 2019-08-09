@@ -1,3 +1,6 @@
+import { SessionModule } from './../../session/session.module';
+import { SessionService } from './../../session/session.service';
+import { flushRedis } from './../../../__test__/utilities';
 import { HttpStatus } from '@nestjs/common';
 import { AppConstants } from './../../../config/constants';
 import { TestContext, getContext } from '../../../__e2e__/test.context';
@@ -6,7 +9,6 @@ import { recreateSchema } from '../../../__test__';
 import * as request from 'supertest';
 import { DtoGetUsersResponse } from '../dto/response/dto.get.users.response';
 import { DbUser } from '../../db/entities/user.entity';
-import { DbSession } from '../../db/entities/session.entity';
 import { RoleEnum } from '../../../config/role.enum';
 import { RightsEnum } from '../../../config/rights.enum';
 
@@ -15,14 +17,17 @@ describe('User Controller', () => {
 
   let entityBuilder: EntityBuilder;
 
+  let sessionService: SessionService;
+
   const API_URL = `/${AppConstants.API_PREFIX}/users`;
 
   beforeAll(async () => {
     context = await getContext(true);
+    sessionService = context.app.select(SessionModule).get<SessionService>(SessionService);
   });
 
   beforeEach(async () => {
-    await Promise.all([recreateSchema(context.connection)]);
+    await Promise.all([recreateSchema(context.connection), flushRedis(context.app)]);
     entityBuilder = await EntityBuilder.create(context.connection);
   });
 
@@ -31,17 +36,21 @@ describe('User Controller', () => {
   });
 
   class AuthContext {
-    sessionWithAuthority: DbSession;
-    sessionWithoutAuthority: DbSession;
+    authTokenWithAuthority: string;
+    authTokenWithoutAuthority: string;
     users: DbUser[];
   }
 
   const validContext = async (): Promise<AuthContext> => {
+    const userRequest1 = { email: 'test1@mail.com', password: '1234' };
+    const userRequest2 = { email: 'test2@mail.com', password: '1234' };
+    const userRequest3 = { email: 'test3@mail.com', password: '1234' };
+
     const users = await Promise.all(
       new Array(
-        entityBuilder.createUser('user2@mail.com', '12345', 'random1', 30),
-        entityBuilder.createUser('user1@mail.com', '12345', 'random2', 40),
-        entityBuilder.createUser('user3@mail.com', '12345', 'random3', 50),
+        entityBuilder.createUser(userRequest2.email, userRequest2.password, 'random1', 30),
+        entityBuilder.createUser(userRequest1.email, userRequest1.password, 'random2', 40),
+        entityBuilder.createUser(userRequest3.email, userRequest3.password, 'random3', 50),
       ),
     );
 
@@ -51,10 +60,10 @@ describe('User Controller', () => {
     await entityBuilder.createRoleRight(role, right);
     await entityBuilder.createUserRole(users[0], role);
 
-    const sessionWithAuthority = await entityBuilder.createSession(users[0]);
-    const sessionWithoutAuthority = await entityBuilder.createSession(users[1]);
+    const authTokenWithAuthority = (await sessionService.login(userRequest2)).token;
+    const authTokenWithoutAuthority = (await sessionService.login(userRequest1)).token;
 
-    return { sessionWithAuthority, sessionWithoutAuthority, users };
+    return { authTokenWithAuthority, authTokenWithoutAuthority, users };
   };
 
   describe('GET - ' + API_URL, () => {
@@ -64,7 +73,7 @@ describe('User Controller', () => {
 
       const response = await request(context.server)
         .get(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.sessionWithAuthority.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authTokenWithAuthority)
         .expect(HttpStatus.OK);
 
       expect(response.body).not.toBeUndefined();
@@ -87,7 +96,7 @@ describe('User Controller', () => {
 
       await request(context.server)
         .get(API_URL)
-        .set(AppConstants.X_AUTH_TOKEN, ctx.sessionWithoutAuthority.token)
+        .set(AppConstants.X_AUTH_TOKEN, ctx.authTokenWithoutAuthority)
         .expect(HttpStatus.FORBIDDEN);
     });
   });

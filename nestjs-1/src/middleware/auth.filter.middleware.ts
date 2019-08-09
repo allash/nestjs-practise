@@ -3,29 +3,28 @@ import {
 } from './../module/db/repositories/user.repository';
 import { AppConstants } from './../config/constants';
 import { DtoSession } from './../shared/dto/dto.session';
-import { SessionRepository } from './../module/db/repositories/session.repository';
-import { NestMiddleware, Injectable, Inject, Logger } from '@nestjs/common';
+import { NestMiddleware, Injectable, Inject } from '@nestjs/common';
 import { DbConstants } from '../module/db/db.constants';
 import { Request, Response, NextFunction } from 'express';
 import * as _ from 'lodash';
 import { DbUser } from '../module/db/entities/user.entity';
+import { RedisService } from '../module/redis/redis.service';
 
 @Injectable()
 export class AuthFilterMiddleware implements NestMiddleware {
   constructor(
-    @Inject(DbConstants.SESSION_REPOSITORY)
-    private readonly sessionRepo: SessionRepository,
     @Inject(DbConstants.USER_REPOSITORY)
     private readonly userRepo: UserRepository,
+    private readonly redisService: RedisService
   ) {}
 
   public async use(req: Request, res: Response, next: NextFunction) {
     const authToken: string = req.headers[AppConstants.X_AUTH_TOKEN] as string;
 
     if (authToken) {
-      const session = await this.sessionRepo.findOneByToken(authToken);
-      if (session != null) {
-        const user = await this.userRepo.findUserWithGrantedAuthorities(session.userId);
+      const userId = await this.redisService.get(authToken);
+      if (userId != null) {
+        const user = await this.userRepo.findUserWithGrantedAuthorities(userId);
         if (user != null) {
           const rights = user ? this.getRights(user) : [];
 

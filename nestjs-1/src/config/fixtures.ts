@@ -4,13 +4,15 @@ import { Logger } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import EntityBuilder from '../__test__/entity.builder';
 import { RightsEnum } from './rights.enum';
+import { RedisService } from '../module/redis/redis.service';
+import uuid = require('uuid');
 
 export class Fixtures {
 
   private logger = new Logger(Fixtures.name);
 
-  private async rebuildDatabase(connection: Connection) {
-    this.logger.warn('Erasing database and loading fixtures');
+  private async rebuildDatabases(connection: Connection, redisService: RedisService) {
+    this.logger.warn('Erasing postgres database and loading fixtures...');
 
     const schema = (connection.options as PostgresConnectionOptions).schema;
 
@@ -32,9 +34,15 @@ export class Fixtures {
     this.logger.log('Synchronizing entities');
 
     await connection.runMigrations();
+
+    this.logger.warn('Erasing redis db and loading fixtures...');
+
+    const redisFlushResult = await redisService.flush();
+
+    this.logger.warn(`Redis flush result: ${redisFlushResult}`);
   }
 
-  private async loadFixtures(connection: Connection) {
+  private async loadFixtures(connection: Connection, redisService: RedisService) {
 
     const builder = await EntityBuilder.create(connection);
 
@@ -82,15 +90,14 @@ export class Fixtures {
       await builder.createInvoice(admin, i * 10);
     }
 
-    // create sessions
-    await builder.createSession(superAdmin);
-    await builder.createSession(admin);
-    await builder.createSession(user);
-    await builder.createSession(userWithoutAnyRole);
-    await builder.createSession(userWithEmptyRole);
+    await redisService.set(uuid.v4(), superAdmin.id);
+    await redisService.set(uuid.v4(), admin.id);
+    await redisService.set(uuid.v4(), user.id);
+    await redisService.set(uuid.v4(), userWithoutAnyRole.id);
+    await redisService.set(uuid.v4(), userWithEmptyRole.id);
   }
 
-  async run(connection: Connection) {
+  async run(connection: Connection, redisService: RedisService) {
 
     if (process.env.NODE_ENV !== 'dev') {
         this.logger.error('fixtures: NODE_ENV is not development');
@@ -98,7 +105,7 @@ export class Fixtures {
         );
       }
 
-    await this.rebuildDatabase(connection);
-    await this.loadFixtures(connection);
+    await this.rebuildDatabases(connection, redisService);
+    await this.loadFixtures(connection, redisService);
   }
 }

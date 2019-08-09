@@ -1,5 +1,5 @@
+import { RedisModule } from './../redis/redis.module';
 import { UserRepository } from './../db/repositories/user.repository';
-import { SessionRepository } from './../db/repositories/session.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SessionMapper } from './session.mapper';
 import { SessionController } from './session.controller';
@@ -9,6 +9,9 @@ import { Module } from '@nestjs/common';
 @Module({
   controllers: [SessionController],
   providers: [SessionService, SessionMapper],
-  imports: [TypeOrmModule.forFeature([SessionRepository, UserRepository])],
+  imports: [
+    RedisModule,
+    TypeOrmModule.forFeature([UserRepository])
+  ],
 })
 export class SessionModule { }

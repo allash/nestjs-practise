@@ -14,5 +14,5 @@ redis:
   image: redis:4.0.8
   container_name: nestjs_redis
   ports:
-    - "8002:6379"
+    - "6379:6379"
   restart: always

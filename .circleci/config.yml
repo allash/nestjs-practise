@@ -10,6 +10,7 @@ jobs:
           - POSTGRES_USER=demo
           - POSTGRES_PASSWORD=demo
           - POSTGRES_DB=demo
+      - image: redis:4.0.8
 
     working_directory: ~/nestjs-practise
 

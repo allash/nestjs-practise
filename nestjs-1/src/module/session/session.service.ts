@@ -1,22 +1,20 @@
 import { UserNotFoundException } from '../../exceptions/user/user.not.found.exception';
 import { SessionMapper } from './session.mapper';
 import { UserRepository } from './../db/repositories/user.repository';
-import { SessionRepository } from './../db/repositories/session.repository';
-import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { DtoLoginRequest } from './dto/request/dto.login.request';
 import { DbConstants } from '../db/db.constants';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
-import { DbSession } from '../db/entities/session.entity';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class SessionService {
   constructor(
     @Inject(DbConstants.USER_REPOSITORY)
     private readonly userRepo: UserRepository,
-    @Inject(DbConstants.SESSION_REPOSITORY)
-    private readonly sessionRepo: SessionRepository,
-    private readonly sessionMapper: SessionMapper
+    private readonly sessionMapper: SessionMapper,
+    private readonly redisService: RedisService
   ) {}
 
   async login(dto: DtoLoginRequest) {
@@ -28,11 +26,7 @@ export class SessionService {
 
     const token = uuid.v4();
 
-    const session = new DbSession();
-    session.token = token;
-    session.user = user;
-    session.userId = user.id;
-    await this.sessionRepo.save(session);
+    await this.redisService.set(token, user.id);
 
     return this.sessionMapper.toDtoLoginResponse(token);
   }

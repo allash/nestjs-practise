@@ -1,3 +1,4 @@
+import { flushRedis } from './../../../__test__/utilities';
 import { AppConstants } from './../../../config/constants';
 import { HttpStatus } from '@nestjs/common';
 import { DtoLoginRequest } from './../dto/request/dto.login.request';
@@ -19,7 +20,7 @@ describe('Session Controller', () => {
   });
 
   beforeEach(async () => {
-    await Promise.all([recreateSchema(context.connection)]);
+    await Promise.all([recreateSchema(context.connection), flushRedis(context.app)]);
     entityBuilder = await EntityBuilder.create(context.connection);
   });
 
