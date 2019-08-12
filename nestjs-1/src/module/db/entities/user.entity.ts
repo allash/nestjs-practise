@@ -10,8 +10,11 @@ export class DbUser {
     @Column({ name: 'first_name' })
     public firstName: string;
 
-    @Column({ name: 'age' })
-    public age: number;
+    @Column({ name: 'last_name' })
+    public lastName: string;
+
+    @Column({ name: 'phone', nullable: true })
+    public phone: string;
 
     @Column({ name: 'email', nullable: false, unique: true })
     public email: string;

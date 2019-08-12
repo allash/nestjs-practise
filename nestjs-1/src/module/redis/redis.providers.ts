@@ -22,7 +22,6 @@ export const RedisProviders = [
 
       client = await new Promise((resolve, reject) => {
         let internalClient: any;
-
         internalClient = asyncRedis.createClient({
           host: config.host,
           port: config.port,

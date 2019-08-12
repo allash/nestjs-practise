@@ -1,13 +1,13 @@
 export class DtoGetUsersResponse {
     id: string;
     firstName: string;
-    age: number;
+    lastName: string;
     email: string;
 
-    constructor(id: string = '', email: string = '', firstName: string = '', age: number = 0) {
+    constructor(id: string = '', email: string = '', firstName: string = '', lastName: string = '') {
         this.id = id;
         this.firstName = firstName;
-        this.age = age;
+        this.lastName = lastName;
         this.email = email;
     }
 }

@@ -1,7 +1,8 @@
 import { RoleEnum } from './role.enum';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { Logger } from '@nestjs/common';
-import { Connection } from 'typeorm';
+import * as fakerStatic from 'faker';
+import { Connection, Transaction } from 'typeorm';
 import EntityBuilder from '../__test__/entity.builder';
 import { RightsEnum } from './rights.enum';
 import { RedisService } from '../module/redis/redis.service';
@@ -95,6 +96,16 @@ export class Fixtures {
     await redisService.set(uuid.v4(), user.id);
     await redisService.set(uuid.v4(), userWithoutAnyRole.id);
     await redisService.set(uuid.v4(), userWithEmptyRole.id);
+
+    // create fake users
+
+    for (let i = 0; i < 200; i++) {
+      const firstName = fakerStatic.name.firstName();
+      const lastName = fakerStatic.name.lastName();
+      const email = `${firstName}.${lastName}${i}@mail.com`.toLowerCase();
+      const phone = fakerStatic.phone.phoneNumber();
+      await builder.createUser(email, 'asdf', firstName, lastName, phone);
+    }
   }
 
   async run(connection: Connection, redisService: RedisService) {

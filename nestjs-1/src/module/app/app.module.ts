@@ -1,4 +1,4 @@
-import { SessionService } from './../session/session.service';
+import { ChatModule } from './../chat/chat.module';
 import { InvoiceModule } from './../invoice/invoice.module';
 import { DbConstants } from './../db/db.constants';
 import { Fixtures } from './../../config/fixtures';

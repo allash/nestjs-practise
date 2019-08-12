@@ -48,9 +48,9 @@ describe('User Controller', () => {
 
     const users = await Promise.all(
       new Array(
-        entityBuilder.createUser(userRequest2.email, userRequest2.password, 'random1', 30),
-        entityBuilder.createUser(userRequest1.email, userRequest1.password, 'random2', 40),
-        entityBuilder.createUser(userRequest3.email, userRequest3.password, 'random3', 50),
+        entityBuilder.createUser(userRequest2.email, userRequest2.password, 'random1'),
+        entityBuilder.createUser(userRequest1.email, userRequest1.password, 'random2'),
+        entityBuilder.createUser(userRequest3.email, userRequest3.password, 'random3'),
       ),
     );
 
@@ -85,7 +85,7 @@ describe('User Controller', () => {
 
       for (let i = 0; i < users.length; i++) {
         expect(users[i].id).toEqual(usersResponse[i].id);
-        expect(users[i].age).toEqual(usersResponse[i].age);
+        expect(users[i].lastName).toEqual(usersResponse[i].lastName);
         expect(users[i].firstName).toEqual(usersResponse[i].firstName);
         expect(users[i].email).toEqual(usersResponse[i].email);
       }

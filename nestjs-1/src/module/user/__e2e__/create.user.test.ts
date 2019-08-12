@@ -48,8 +48,8 @@ describe('User Controller', () => {
 
     const body: DtoCreateUserRequest = {
       firstName: 'Michael',
-      email: 'michael@mail.com',
-      age: 1,
+      lastName: 'Doe',
+      email: 'michael.doe@mail.com',
       password: '134'
     };
 
@@ -71,7 +71,7 @@ describe('User Controller', () => {
       expect(createdUser).not.toBeNull();
       expect(createdUser!.email).toEqual(ctx.body.email);
       expect(createdUser!.firstName).toEqual(ctx.body.firstName);
-      expect(createdUser!.age).toEqual(ctx.body.age);
+      expect(createdUser!.lastName).toEqual(ctx.body.lastName);
     });
 
     it('expects 400 when user does not have valid email', async () => {
@@ -107,9 +107,9 @@ describe('User Controller', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('expects 400 when user has empty age', async () => {
+    it('expects 400 when user has empty last name', async () => {
       const ctx = await validContext();
-      delete ctx.body.age;
+      delete ctx.body.lastName;
 
       await request(context.server)
         .post(API_URL)

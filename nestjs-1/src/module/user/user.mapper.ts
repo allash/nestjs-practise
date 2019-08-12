@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 export class UserMapper {
     public toDtoGetUsersResponse(users: DbUser[]): DtoGetUsersResponse[] {
         return users.map((user: DbUser) =>
-            new DtoGetUsersResponse(user.id, user.email, user.firstName, user.age),
+            new DtoGetUsersResponse(user.id, user.email, user.firstName, user.lastName),
         );
     }
 }

@@ -6,7 +6,7 @@ export class DtoCreateUserRequest {
     firstName: string;
 
     @IsNotEmpty()
-    age: number;
+    lastName: string;
 
     @IsNotEmpty()
     @IsEmail()
