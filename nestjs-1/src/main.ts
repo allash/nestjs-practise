@@ -1,16 +1,29 @@
 import { ErrorFilter } from './filter/error.filter';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './module/app/app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { WsAdapter } from '@nestjs/platform-ws';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { initExpress } from './initializer';
+import { ExpressAdapter } from '@nestjs/platform-express';
+
+const logger = new Logger('Main');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const server = await initExpress();
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(server),
+    {},
+  );
+
+  app.useWebSocketAdapter(new WsAdapter(app.getHttpServer()));
   app.useGlobalFilters(new ErrorFilter());
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
 
   // init swagger
   const options = new DocumentBuilder()
@@ -21,18 +34,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('/swagger', app, document);
 
-  // init cors
-  const corsOptions: CorsOptions = {
-    allowedHeaders: ['Origin', 'X-Requested-With', 'Access-Control-Allow-Origin', 'Content-Type', 'Accept', 'x-xsrf-token', 'x-auth-token'],
-    credentials: true,
-    methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
-    origin: ['*'],
-    preflightContinue: false,
-    optionsSuccessStatus: 200
-  };
-
-  app.enableCors(corsOptions);
-
-  await app.listen(process.env.PORT || 3001);
+  const port = process.env.PORT || 3001;
+  logger.log(`App started on port ${port}`);
+  await app.listen(port);
 }
+
 bootstrap();

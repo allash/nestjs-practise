@@ -3,7 +3,7 @@ import { UserMapper } from './user.mapper';
 import { DbUser } from './../db/entities/user.entity';
 import { UserRepository } from './../db/repositories/user.repository';
 import { DbConstants } from '../db/db.constants';
-import { Injectable, Inject, ForbiddenException, Logger } from '@nestjs/common';
+import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
 import { DtoGetUsersResponse } from './dto/response/dto.get.users.response';
 import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
 import * as bcrypt from 'bcrypt';
@@ -14,7 +14,7 @@ export class UserService {
   constructor(
     @Inject(DbConstants.USER_REPOSITORY)
     private readonly userRepo: UserRepository,
-    private readonly userMapper: UserMapper,
+    private readonly userMapper: UserMapper
   ) {}
 
   async getUsers(): Promise<DtoGetUsersResponse[]> {
@@ -32,7 +32,7 @@ export class UserService {
     user.email = dto.email;
     user.password = await bcrypt.hash(dto.password, 10);
     user.firstName = dto.firstName;
-    user.age = dto.age;
+    user.lastName = dto.lastName;
 
     await this.userRepo.save(user);
   }

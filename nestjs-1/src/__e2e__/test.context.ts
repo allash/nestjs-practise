@@ -1,10 +1,8 @@
+import { WsAdapter } from '@nestjs/platform-ws';
 import { RedisConstants } from './../module/redis/redis.constants';
-import { InvoiceModule } from './../module/invoice/invoice.module';
 import { AppModule } from './../module/app/app.module';
 import { DbConstants } from './../module/db/db.constants';
 import { DbModule } from './../module/db/db.module';
-import { SessionModule } from './../module/session/session.module';
-import { UserModule } from './../module/user/user.module';
 import { Test } from '@nestjs/testing';
 import { Connection } from 'typeorm';
 import * as express from 'express';
@@ -19,21 +17,26 @@ class TestContext {
   public redisClient: any;
 
   public async init() {
-
     const testModule = await Test.createTestingModule({
-      imports: [AppModule, UserModule, SessionModule, DbModule, InvoiceModule, RedisModule],
+      imports: [
+        AppModule
+      ]
     }).compile();
 
     const expressAdapter = new ExpressAdapter(this.server);
     this.app = testModule.createNestApplication(expressAdapter);
 
+    await this.app.useWebSocketAdapter(new WsAdapter(this.app) as any);
+
     await this.app.useGlobalPipes(new ValidationPipe()).init();
 
-    this.redisClient = await this.app.select(RedisModule).get(RedisConstants.REDIS_CONNECTION);
+    this.redisClient = await this.app
+      .select(RedisModule)
+      .get(RedisConstants.REDIS_CONNECTION);
 
     this.connection = await this.app
-        .select(DbModule)
-        .get<Connection>(DbConstants.DB_CONNECTION);
+      .select(DbModule)
+      .get<Connection>(DbConstants.DB_CONNECTION);
 
     if (this.connection == null) {
       throw new Error(
@@ -43,9 +46,15 @@ class TestContext {
   }
 
   public async tearDown() {
-    if (this.connection) { await this.connection.close(); }
-    if (this.app) { await this.app.close(); }
-    if (this.redisClient) { await this.redisClient.quit(); }
+    if (this.connection) {
+      await this.connection.close();
+    }
+    if (this.app) {
+      await this.app.close();
+    }
+    if (this.redisClient) {
+      await this.redisClient.quit();
+    }
   }
 }
 

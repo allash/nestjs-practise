@@ -3,6 +3,7 @@ import { AppConstants } from './../../config/constants';
 import { UserNamePipe } from './../../pipe/username.pipe';
 import { HasRight, Public } from '../../guards/auth.guard';
 import { UserService } from './user.service';
+import { Response } from 'express';
 import {
   Controller,
   Get,
@@ -12,7 +13,9 @@ import {
   UseInterceptors,
   UploadedFile,
   HttpCode,
-  HttpStatus
+  HttpStatus,
+  Res,
+  Logger
 } from '@nestjs/common';
 import { DtoGetUsersResponse } from './dto/response/dto.get.users.response';
 import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
@@ -20,17 +23,25 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import multer = require('multer');
 import { ApiUseTags, ApiImplicitHeader } from '@nestjs/swagger';
 import { RightsEnum } from '../../config/rights.enum';
+import { DtoSearchUserRequest } from './dto/request/dto.search.user.request';
+import { DtoSearchUserResponse } from './dto/response/dto.search.user.response';
 
 @Controller(`${AppConstants.API_PREFIX}/users`)
 @ApiUseTags('users')
 export class UserController extends BaseController {
+  private logger = new Logger(UserController.name);
+
   constructor(private readonly userService: UserService) {
     super();
   }
 
   @Get()
   @HasRight(RightsEnum.CAN_READ_USERS)
-  @ApiImplicitHeader({ name: AppConstants.X_AUTH_TOKEN, required: true, description: 'user session token' })
+  @ApiImplicitHeader({
+    name: AppConstants.X_AUTH_TOKEN,
+    required: true,
+    description: 'user session token',
+  })
   async getUsers(): Promise<DtoGetUsersResponse[]> {
     return await this.userService.getUsers();
   }
@@ -78,8 +89,8 @@ export class UserController extends BaseController {
   @Post('/memory-upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: multer.memoryStorage()
-    })
+      storage: multer.memoryStorage(),
+    }),
   )
   async uploadDiskToMemory(@UploadedFile() file: Express.Multer.File) {
     console.log(file);

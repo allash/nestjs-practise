@@ -8,6 +8,7 @@ import { DbRole } from '../module/db/entities/role.entity';
 import { DbUserRole } from '../module/db/entities/user.role.entity';
 import { DbRoleRight } from '../module/db/entities/role.right.entity';
 import { DbRight } from '../module/db/entities/right.entity';
+import uuid = require('uuid');
 
 export default class EntityBuilder {
   public userRepo: Repository<DbUser>;
@@ -31,12 +32,14 @@ export default class EntityBuilder {
   public async createUser(
     email: string,
     password: string,
-    firstName: string = 'random',
-    age: number = 99,
+    firstName: string = uuid.v4().toString(),
+    lastName: string = uuid.v4().toString(),
+    phone: string = '123456789',
   ): Promise<DbUser> {
     const user = new DbUser();
     user.firstName = firstName;
-    user.age = age;
+    user.lastName = lastName;
+    user.phone = phone;
     user.email = email;
     user.password = await bcrypt.hash(password, 10);
     return await this.userRepo.save(user);
