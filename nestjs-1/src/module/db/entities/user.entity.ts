@@ -1,6 +1,7 @@
 import { DbInvoice } from './invoice.entity';
 import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, OneToMany } from 'typeorm';
 import { DbUserRole } from './user.role.entity';
+import { DbUserFile } from './user.file.entity';
 
 @Entity('user')
 export class DbUser {
@@ -33,4 +34,7 @@ export class DbUser {
 
     @OneToMany(() => DbUserRole, (userRole) => userRole.user)
     public userRoles: DbUserRole[];
+
+    @OneToMany(() => DbUserFile, (userFile) => userFile.user)
+    public userFiles: DbUserFile[];
 }

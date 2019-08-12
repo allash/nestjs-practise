@@ -6,5 +6,6 @@ export const DbConstants = {
     RIGHT_REPOSITORY: 'RightRepository',
     USER_ROLE_REPOSITORY: 'UserRoleRepository',
     ROLE_RIGHT_REPOSITORY: 'RoleRightRepository',
-    INVOICE_REPOSITORY: 'InvoiceRepository'
+    INVOICE_REPOSITORY: 'InvoiceRepository',
+    USER_FILE_REPOSITORY: 'UserFileRepository'
 };

@@ -9,6 +9,7 @@ import { DbUserRole } from '../module/db/entities/user.role.entity';
 import { DbRoleRight } from '../module/db/entities/role.right.entity';
 import { DbRight } from '../module/db/entities/right.entity';
 import uuid = require('uuid');
+import { DbUserFile } from '../module/db/entities/user.file.entity';
 
 export default class EntityBuilder {
   public userRepo: Repository<DbUser>;
@@ -17,6 +18,7 @@ export default class EntityBuilder {
   public rightRepo: Repository<DbRight>;
   public roleRightRepo: Repository<DbRoleRight>;
   public invoiceRepo: Repository<DbInvoice>;
+  public userFileRepo: Repository<DbUserFile>;
 
   constructor(
     @Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection
@@ -27,6 +29,7 @@ export default class EntityBuilder {
     this.rightRepo = this.connection.getRepository(DbRight);
     this.roleRightRepo = this.connection.getRepository(DbRoleRight);
     this.invoiceRepo = this.connection.getRepository(DbInvoice);
+    this.userFileRepo = this.connection.getRepository(DbUserFile);
   }
 
   public async createUser(

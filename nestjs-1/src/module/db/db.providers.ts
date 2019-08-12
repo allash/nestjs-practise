@@ -1,3 +1,4 @@
+import { UserFileRepository } from './repositories/user.file.repository';
 import { UserRoleRepository } from './repositories/user.role.repository';
 import { UserRepository } from './repositories/user.repository';
 import { Connection, createConnection, getConnectionOptions } from 'typeorm';
@@ -43,6 +44,12 @@ export const DbProviders = [
     provide: DbConstants.INVOICE_REPOSITORY,
     useFactory: (connection: Connection) =>
       connection.getCustomRepository(InvoiceRepository),
+    inject: [DbConstants.DB_CONNECTION],
+  },
+  {
+    provide: DbConstants.USER_FILE_REPOSITORY,
+    useFactory: (connection: Connection) =>
+      connection.getCustomRepository(UserFileRepository),
     inject: [DbConstants.DB_CONNECTION],
   },
   {

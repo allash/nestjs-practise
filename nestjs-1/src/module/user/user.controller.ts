@@ -3,7 +3,6 @@ import { AppConstants } from './../../config/constants';
 import { UserNamePipe } from './../../pipe/username.pipe';
 import { HasRight, Public } from '../../guards/auth.guard';
 import { UserService } from './user.service';
-import { Response } from 'express';
 import {
   Controller,
   Get,
@@ -23,8 +22,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import multer = require('multer');
 import { ApiUseTags, ApiImplicitHeader } from '@nestjs/swagger';
 import { RightsEnum } from '../../config/rights.enum';
-import { DtoSearchUserRequest } from './dto/request/dto.search.user.request';
-import { DtoSearchUserResponse } from './dto/response/dto.search.user.response';
+import { DtoUserFileUploadResponse } from './dto/response/dto.user.file.upload.response';
+import { CurrentSession } from '../../decorators/current.session.decorator';
+import { DtoSession } from '../../shared/dto/dto.session';
 
 @Controller(`${AppConstants.API_PREFIX}/users`)
 @ApiUseTags('users')
@@ -86,13 +86,15 @@ export class UserController extends BaseController {
     console.log(file);
   }
 
-  @Post('/memory-upload')
+  @Post('/files/upload')
+  @HttpCode(HttpStatus.OK)
+  @HasRight(RightsEnum.CAN_UPLOAD_USER_FILES)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: multer.memoryStorage(),
     }),
   )
-  async uploadDiskToMemory(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+  async uploadFile(@CurrentSession() session: DtoSession, @UploadedFile() file: Express.Multer.File): Promise<DtoUserFileUploadResponse> {
+    return this.userService.uploadFile(session.userId, file);
   }
 }
