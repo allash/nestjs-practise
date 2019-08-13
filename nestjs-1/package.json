@@ -89,7 +89,9 @@
     "tslint": "5.16.0",
     "typescript": "^3.5.2",
     "wait-on": "^3.2.0",
-    "aws-sdk-mock": "^4.5.0"
+    "aws-sdk-mock": "^4.5.0",
+    "husky": "^3.0.2",
+    "lint-staged": "^9.2.0"
   },
   "jest": {
     "setupFiles": [
@@ -111,5 +113,10 @@
     "testRegex": "src/.*\\.test.ts",
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "yarn tslint"
+    ]
   }
 }
