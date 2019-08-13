@@ -28,7 +28,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:sonar": "env TZ='Europe/Berlin' jest --coverage --ci --maxWorkers=6 --testResultsProcessor=\"./node_modules/jest-sonar-reporter\" --coverageReporters=lcov --collectCoverage true --coverageDirectory coverage",
-    "build:deptree": "depcruise --exclude '(node_modules|dist|coverage|test|src/migrations)' --output-type dot src | dot -T svg > deptree/dependencygraph.svg" 
+    "build:deptree": "depcruise --exclude '(node_modules|dist|coverage|test|src/migrations)' --output-type dot src | dot -T svg > deptree/dependencygraph.svg",
+    "depcruise": "depcruise --exclude '(src/migrations)' -v -- src"
   },
   "dependencies": {
     "@nestjs/common": "^6.0.4",
