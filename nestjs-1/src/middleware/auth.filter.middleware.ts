@@ -1,6 +1,4 @@
-import {
-  UserRepository,
-} from './../module/db/repositories/user.repository';
+import { UserRepository } from './../module/db/repositories/user.repository';
 import { AppConstants } from './../config/constants';
 import { DtoSession } from './../shared/dto/dto.session';
 import { NestMiddleware, Injectable, Inject } from '@nestjs/common';
@@ -15,7 +13,7 @@ export class AuthFilterMiddleware implements NestMiddleware {
   constructor(
     @Inject(DbConstants.USER_REPOSITORY)
     private readonly userRepo: UserRepository,
-    private readonly redisService: RedisService
+    private readonly redisService: RedisService,
   ) {}
 
   public async use(req: Request, res: Response, next: NextFunction) {

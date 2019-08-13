@@ -4,7 +4,12 @@ import { UserMapper } from './user.mapper';
 import { DbUser } from './../db/entities/user.entity';
 import { UserRepository } from './../db/repositories/user.repository';
 import { DbConstants } from '../db/db.constants';
-import { Injectable, Inject, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { DtoGetUsersResponse } from './dto/response/dto.get.users.response';
 import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
 import * as bcrypt from 'bcrypt';
@@ -23,7 +28,7 @@ export class UserService {
     @Inject(DbConstants.USER_FILE_REPOSITORY)
     private readonly userFileRepo: UserFileRepository,
     private readonly userMapper: UserMapper,
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
   ) {}
 
   async getUsers(): Promise<DtoGetUsersResponse[]> {
@@ -54,13 +59,18 @@ export class UserService {
     throw new UserNotFoundException();
   }
 
-  async uploadFile(userId: string, file: Express.Multer.File): Promise<DtoUserFileUploadResponse> {
+  async uploadFile(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<DtoUserFileUploadResponse> {
     if (file == null) {
       throw new BadRequestException('no file uploaded');
     }
 
     const user = await this.userRepo.findOne(userId);
-    if (user == null) { throw new UserNotFoundByIdException(userId); }
+    if (user == null) {
+      throw new UserNotFoundByIdException(userId);
+    }
 
     const userFile = new DbUserFile();
     userFile.name = uuid.v4();
@@ -71,7 +81,11 @@ export class UserService {
     userFile.userId = user.id;
     await this.userFileRepo.save(userFile);
 
-    const signedUrl = await this.s3Service.upload(file.buffer, file.originalname, file.mimetype);
+    const signedUrl = await this.s3Service.upload(
+      file.buffer,
+      file.originalname,
+      file.mimetype,
+    );
     return { signedUrl };
   }
 }

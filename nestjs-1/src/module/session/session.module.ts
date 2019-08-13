@@ -9,9 +9,6 @@ import { Module } from '@nestjs/common';
 @Module({
   controllers: [SessionController],
   providers: [SessionService, SessionMapper],
-  imports: [
-    RedisModule,
-    TypeOrmModule.forFeature([UserRepository])
-  ],
+  imports: [RedisModule, TypeOrmModule.forFeature([UserRepository])],
 })
-export class SessionModule { }
+export class SessionModule {}

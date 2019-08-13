@@ -23,11 +23,16 @@ describe('User Controller', () => {
 
   beforeAll(async () => {
     context = await getContext(true);
-    sessionService = context.app.select(SessionModule).get<SessionService>(SessionService);
+    sessionService = context.app
+      .select(SessionModule)
+      .get<SessionService>(SessionService);
   });
 
   beforeEach(async () => {
-    await Promise.all([recreateSchema(context.connection), flushRedis(context.app)]);
+    await Promise.all([
+      recreateSchema(context.connection),
+      flushRedis(context.app),
+    ]);
     entityBuilder = await EntityBuilder.create(context.connection);
   });
 
@@ -48,9 +53,21 @@ describe('User Controller', () => {
 
     const users = await Promise.all(
       new Array(
-        entityBuilder.createUser(userRequest2.email, userRequest2.password, 'random1'),
-        entityBuilder.createUser(userRequest1.email, userRequest1.password, 'random2'),
-        entityBuilder.createUser(userRequest3.email, userRequest3.password, 'random3'),
+        entityBuilder.createUser(
+          userRequest2.email,
+          userRequest2.password,
+          'random1',
+        ),
+        entityBuilder.createUser(
+          userRequest1.email,
+          userRequest1.password,
+          'random2',
+        ),
+        entityBuilder.createUser(
+          userRequest3.email,
+          userRequest3.password,
+          'random3',
+        ),
       ),
     );
 
@@ -60,8 +77,10 @@ describe('User Controller', () => {
     await entityBuilder.createRoleRight(role, right);
     await entityBuilder.createUserRole(users[0], role);
 
-    const authTokenWithAuthority = (await sessionService.login(userRequest2)).token;
-    const authTokenWithoutAuthority = (await sessionService.login(userRequest1)).token;
+    const authTokenWithAuthority = (await sessionService.login(userRequest2))
+      .token;
+    const authTokenWithoutAuthority = (await sessionService.login(userRequest1))
+      .token;
 
     return { authTokenWithAuthority, authTokenWithoutAuthority, users };
   };

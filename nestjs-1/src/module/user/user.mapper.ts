@@ -4,9 +4,15 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UserMapper {
-    public toDtoGetUsersResponse(users: DbUser[]): DtoGetUsersResponse[] {
-        return users.map((user: DbUser) =>
-            new DtoGetUsersResponse(user.id, user.email, user.firstName, user.lastName),
-        );
-    }
+  public toDtoGetUsersResponse(users: DbUser[]): DtoGetUsersResponse[] {
+    return users.map(
+      (user: DbUser) =>
+        new DtoGetUsersResponse(
+          user.id,
+          user.email,
+          user.firstName,
+          user.lastName,
+        ),
+    );
+  }
 }

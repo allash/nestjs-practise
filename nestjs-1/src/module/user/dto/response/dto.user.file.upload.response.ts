@@ -1,3 +1,3 @@
 export class DtoUserFileUploadResponse {
-    public signedUrl: string;
+  public signedUrl: string;
 }

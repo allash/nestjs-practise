@@ -11,14 +11,13 @@ import uuid = require('uuid');
 
 @WebSocketGateway(8080)
 export class SocketGateway {
-
   @WebSocketServer() public server: any;
   private logger = new Logger(SocketGateway.name);
   private readonly userConnections: Record<string, ChatUserConnection> = {};
 
   private onHandleConnectionError = (err: any) => {
     this.logger.debug(err);
-  }
+  };
 
   async handleConnection(client: any) {
     client.off('error', this.onHandleConnectionError);
@@ -48,7 +47,10 @@ export class SocketGateway {
     }
     userConnection.user = { username: payload.username };
 
-    const packet = { event: ChatConstants.RESULT.CHAT_JOIN_RESULT, data: userConnection.user };
+    const packet = {
+      event: ChatConstants.RESULT.CHAT_JOIN_RESULT,
+      data: userConnection.user,
+    };
     userConnection.client.send(JSON.stringify(packet));
   }
 
@@ -62,11 +64,12 @@ export class SocketGateway {
 
     payload.username = userConnection.user!!.username;
 
-    const packet = { event: ChatConstants.RESULT.CHAT_MESSAGE_RESULT, data: payload };
+    const packet = {
+      event: ChatConstants.RESULT.CHAT_MESSAGE_RESULT,
+      data: payload,
+    };
 
-    userConnection.client.send(
-      JSON.stringify(packet),
-    );
+    userConnection.client.send(JSON.stringify(packet));
   }
 }
 

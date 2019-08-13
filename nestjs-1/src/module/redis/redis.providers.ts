@@ -16,7 +16,9 @@ export const RedisProviders = [
         return client;
       }
 
-      const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
+      const workerId = process.env.JEST_WORKER_ID
+        ? +process.env.JEST_WORKER_ID
+        : 0;
 
       logger.debug(`Creating redis connection with workerId: ${workerId}...`);
 
@@ -26,7 +28,7 @@ export const RedisProviders = [
           host: config.host,
           port: config.port,
           db: 1 + workerId,
-          password: config.password
+          password: config.password,
         });
 
         if (internalClient == null) {

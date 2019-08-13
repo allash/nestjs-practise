@@ -25,13 +25,18 @@ describe.skip('JEST_WORKER_ID_TEST_1', () => {
 
   beforeAll(async () => {
     context = await getContext(true);
-    sessionService = await context.app.select(SessionModule).get<SessionService>(SessionService);
+    sessionService = await context.app
+      .select(SessionModule)
+      .get<SessionService>(SessionService);
   });
 
   beforeEach(async () => {
     jest.setTimeout(WAIT_TIME + 1000);
 
-    await Promise.all([recreateSchema(context.connection), flushRedis(context.app)]);
+    await Promise.all([
+      recreateSchema(context.connection),
+      flushRedis(context.app),
+    ]);
     entityBuilder = await EntityBuilder.create(context.connection);
   });
 
@@ -46,9 +51,12 @@ describe.skip('JEST_WORKER_ID_TEST_1', () => {
   }
 
   const validContext = async (): Promise<AuthContext> => {
-    const loginRequest = { email: 'test@mail.com', password: '12345'};
+    const loginRequest = { email: 'test@mail.com', password: '12345' };
 
-    const user = await entityBuilder.createUser(loginRequest.email, loginRequest.password);
+    const user = await entityBuilder.createUser(
+      loginRequest.email,
+      loginRequest.password,
+    );
 
     const authToken = (await sessionService.login(loginRequest)).token;
 

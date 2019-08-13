@@ -5,7 +5,6 @@ import { RedisModule } from '../module/redis/redis.module';
 import { RedisConstants } from '../module/redis/redis.constants';
 
 export const recreateSchema = async (connection: Connection) => {
-
   const schema = (connection.options as PostgresConnectionOptions).schema;
 
   try {
@@ -24,6 +23,8 @@ export const recreateSchema = async (connection: Connection) => {
 };
 
 export const flushRedis = async (app: INestApplication) => {
-  const connection = app.select(RedisModule).get<any>(RedisConstants.REDIS_CONNECTION);
+  const connection = app
+    .select(RedisModule)
+    .get<any>(RedisConstants.REDIS_CONNECTION);
   await connection.flushdb();
 };

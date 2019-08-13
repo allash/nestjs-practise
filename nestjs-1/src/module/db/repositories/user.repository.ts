@@ -37,7 +37,9 @@ export class UserRepository extends Repository<DbUser> {
       .getRawMany();
   }
 
-  public async findMappedUserGrantedAuthorities(id: string): Promise<DtoUserRole[]> {
+  public async findMappedUserGrantedAuthorities(
+    id: string,
+  ): Promise<DtoUserRole[]> {
     const result = await this.findUserGrantedAuthoritiesRaw(id);
 
     const userRoles: DtoUserRole[] = keysToCamel(result);

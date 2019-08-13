@@ -43,9 +43,9 @@ export const keysToCamel = (o: any) => {
 
     return n;
   } else if (isArray(o)) {
-      return o.map((i: any) => {
-        return keysToCamel(i);
-      });
+    return o.map((i: any) => {
+      return keysToCamel(i);
+    });
   }
 
   return o;

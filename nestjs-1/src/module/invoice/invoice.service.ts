@@ -12,12 +12,14 @@ export class InvoiceService {
     @Inject(DbConstants.USER_REPOSITORY)
     private readonly userRepo: UserRepository,
     @Inject(DbConstants.INVOICE_REPOSITORY)
-    private readonly invoiceRepo: InvoiceRepository
+    private readonly invoiceRepo: InvoiceRepository,
   ) {}
 
   async createInvoice(userId: string, body: DtoCreateInvoiceRequest) {
     const user = await this.userRepo.findOne(userId);
-    if (user == null) { throw new UserNotFoundByIdException(userId); }
+    if (user == null) {
+      throw new UserNotFoundByIdException(userId);
+    }
 
     const invoice = new DbInvoice();
     invoice.priceGross = body.priceGross;

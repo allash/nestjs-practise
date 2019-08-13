@@ -6,8 +6,8 @@ import { InvoiceRepository } from '../db/repositories/invoice.repository';
 import { UserRepository } from '../db/repositories/user.repository';
 
 @Module({
-    controllers: [InvoiceController],
-    providers: [InvoiceService],
-    imports: [TypeOrmModule.forFeature([InvoiceRepository, UserRepository])]
+  controllers: [InvoiceController],
+  providers: [InvoiceService],
+  imports: [TypeOrmModule.forFeature([InvoiceRepository, UserRepository])],
 })
-export class InvoiceModule { }
+export class InvoiceModule {}

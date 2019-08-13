@@ -9,13 +9,12 @@ import { Public } from '../../guards/auth.guard';
 @Controller(`${AppConstants.API_PREFIX}/sessions`)
 @ApiUseTags('sessions')
 export class SessionController {
+  constructor(private readonly sessionService: SessionService) {}
 
-    constructor(private readonly sessionService: SessionService) { }
-
-    @Public()
-    @Post('/login')
-    @HttpCode(HttpStatus.OK)
-    async login(@Body() dto: DtoLoginRequest): Promise<DtoLoginResponse> {
-        return await this.sessionService.login(dto);
-    }
+  @Public()
+  @Post('/login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() dto: DtoLoginRequest): Promise<DtoLoginResponse> {
+    return await this.sessionService.login(dto);
+  }
 }

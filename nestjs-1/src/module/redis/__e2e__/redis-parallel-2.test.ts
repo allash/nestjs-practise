@@ -13,7 +13,9 @@ describe.skip('Redis parallel test', () => {
 
   beforeAll(async () => {
     context = await getContext(true);
-    redisService = await context.app.select(RedisModule).get<RedisService>(RedisService);
+    redisService = await context.app
+      .select(RedisModule)
+      .get<RedisService>(RedisService);
   });
 
   beforeEach(async () => {

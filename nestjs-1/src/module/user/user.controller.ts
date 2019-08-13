@@ -14,7 +14,7 @@ import {
   HttpCode,
   HttpStatus,
   Res,
-  Logger
+  Logger,
 } from '@nestjs/common';
 import { DtoGetUsersResponse } from './dto/response/dto.get.users.response';
 import { DtoCreateUserRequest } from './dto/request/dto.create.user.request';
@@ -94,7 +94,10 @@ export class UserController extends BaseController {
       storage: multer.memoryStorage(),
     }),
   )
-  async uploadFile(@CurrentSession() session: DtoSession, @UploadedFile() file: Express.Multer.File): Promise<DtoUserFileUploadResponse> {
+  async uploadFile(
+    @CurrentSession() session: DtoSession,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<DtoUserFileUploadResponse> {
     return this.userService.uploadFile(session.userId, file);
   }
 }

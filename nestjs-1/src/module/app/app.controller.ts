@@ -7,7 +7,6 @@ import { Public } from '../../guards/auth.guard';
 @Controller(`${AppConstants.API_PREFIX}/app`)
 @ApiUseTags('app')
 export class AppController extends BaseController {
-
   @Public()
   @Get('/ping')
   ping(): string {

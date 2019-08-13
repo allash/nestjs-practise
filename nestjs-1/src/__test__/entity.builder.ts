@@ -21,7 +21,7 @@ export default class EntityBuilder {
   public userFileRepo: Repository<DbUserFile>;
 
   constructor(
-    @Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection
+    @Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection,
   ) {
     this.userRepo = this.connection.getRepository(DbUser);
     this.roleRepo = this.connection.getRepository(DbRole);

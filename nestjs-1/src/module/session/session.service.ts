@@ -14,15 +14,19 @@ export class SessionService {
     @Inject(DbConstants.USER_REPOSITORY)
     private readonly userRepo: UserRepository,
     private readonly sessionMapper: SessionMapper,
-    private readonly redisService: RedisService
+    private readonly redisService: RedisService,
   ) {}
 
   async login(dto: DtoLoginRequest) {
     const user = await this.userRepo.findOneByEmail(dto.email);
-    if (!user) { throw new UserNotFoundException(); }
+    if (!user) {
+      throw new UserNotFoundException();
+    }
 
     const result = await bcrypt.compare(dto.password, user.password);
-    if (result === false) { throw new UserNotFoundException(); }
+    if (result === false) {
+      throw new UserNotFoundException();
+    }
 
     const token = uuid.v4();
 

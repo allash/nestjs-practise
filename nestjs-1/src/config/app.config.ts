@@ -1,3 +1,3 @@
 export class AppConfig {
-    public LOAD_FIXTURES!: boolean;
+  public LOAD_FIXTURES!: boolean;
 }

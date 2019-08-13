@@ -16,10 +16,16 @@ import { RedisService } from '../redis/redis.service';
 
 @Module({
   controllers: [AppController],
-  imports: [TypeOrmModule.forRoot(), UserModule, DbModule, InvoiceModule, SessionModule, RedisModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    UserModule,
+    DbModule,
+    InvoiceModule,
+    SessionModule,
+    RedisModule,
+  ],
 })
 export class AppModule implements NestModule {
-
   public async onModuleInit() {
     if (process.env.FIXTURES === 'true') {
       const fixtures = new Fixtures();
@@ -32,5 +38,8 @@ export class AppModule implements NestModule {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 
-  constructor(@Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection, private redisService: RedisService) { }
+  constructor(
+    @Inject(DbConstants.DB_CONNECTION) private readonly connection: Connection,
+    private redisService: RedisService,
+  ) {}
 }

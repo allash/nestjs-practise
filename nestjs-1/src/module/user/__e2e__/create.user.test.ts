@@ -21,11 +21,16 @@ describe('User Controller', () => {
 
   beforeAll(async () => {
     context = await getContext(true);
-    sessionService = context.app.select(SessionModule).get<SessionService>(SessionService);
+    sessionService = context.app
+      .select(SessionModule)
+      .get<SessionService>(SessionService);
   });
 
   beforeEach(async () => {
-    await Promise.all([recreateSchema(context.connection), flushRedis(context.app)]);
+    await Promise.all([
+      recreateSchema(context.connection),
+      flushRedis(context.app),
+    ]);
     entityBuilder = await EntityBuilder.create(context.connection);
   });
 
@@ -42,7 +47,10 @@ describe('User Controller', () => {
   const validContext = async (): Promise<AuthContext> => {
     const userRequest = { email: 'test@mail.com', password: '1234' };
 
-    const user = await entityBuilder.createUser(userRequest.email, userRequest.password);
+    const user = await entityBuilder.createUser(
+      userRequest.email,
+      userRequest.password,
+    );
 
     const authToken = (await sessionService.login(userRequest)).token;
 
@@ -50,7 +58,7 @@ describe('User Controller', () => {
       firstName: 'Michael',
       lastName: 'Doe',
       email: 'michael.doe@mail.com',
-      password: '134'
+      password: '134',
     };
 
     return { user, authToken, body };
@@ -66,7 +74,9 @@ describe('User Controller', () => {
         .send(ctx.body)
         .expect(HttpStatus.CREATED);
 
-      const createdUser = await entityBuilder.userRepo.findOne( { email: ctx.body.email });
+      const createdUser = await entityBuilder.userRepo.findOne({
+        email: ctx.body.email,
+      });
 
       expect(createdUser).not.toBeNull();
       expect(createdUser!.email).toEqual(ctx.body.email);

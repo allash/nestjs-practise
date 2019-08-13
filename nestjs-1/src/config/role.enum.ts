@@ -1,8 +1,8 @@
 export enum RoleEnum {
-    ADMIN = 'ADMIN',
-    USER = 'USER',
-    RANDOM = 'RANDOM',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  RANDOM = 'RANDOM',
 
-    // without any rights
-    EMPTY = 'EMPTY'
+  // without any rights
+  EMPTY = 'EMPTY',
 }

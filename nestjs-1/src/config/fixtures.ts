@@ -9,10 +9,12 @@ import { RedisService } from '../module/redis/redis.service';
 import uuid = require('uuid');
 
 export class Fixtures {
-
   private logger = new Logger(Fixtures.name);
 
-  private async rebuildDatabases(connection: Connection, redisService: RedisService) {
+  private async rebuildDatabases(
+    connection: Connection,
+    redisService: RedisService,
+  ) {
     this.logger.warn('Erasing postgres database and loading fixtures...');
 
     const schema = (connection.options as PostgresConnectionOptions).schema;
@@ -43,18 +45,32 @@ export class Fixtures {
     this.logger.warn(`Redis flush result: ${redisFlushResult}`);
   }
 
-  private async loadFixtures(connection: Connection, redisService: RedisService) {
-
+  private async loadFixtures(
+    connection: Connection,
+    redisService: RedisService,
+  ) {
     const builder = await EntityBuilder.create(connection);
 
     // init rights
-    const canReadUsersRight = await builder.createRight(RightsEnum.CAN_READ_USERS);
-    const canCreateUserRight = await builder.createRight(RightsEnum.CAN_CREATE_USER);
-    const canEditUserRight = await builder.createRight(RightsEnum.CAN_EDIT_USER);
+    const canReadUsersRight = await builder.createRight(
+      RightsEnum.CAN_READ_USERS,
+    );
+    const canCreateUserRight = await builder.createRight(
+      RightsEnum.CAN_CREATE_USER,
+    );
+    const canEditUserRight = await builder.createRight(
+      RightsEnum.CAN_EDIT_USER,
+    );
 
-    const canDoRandomStuffRight = await builder.createRight(RightsEnum.CAN_DO_RANDOM_STUFF);
-    const canCreateTicketRight = await builder.createRight(RightsEnum.CAN_CREATE_TICKET);
-    const canUploadUserFileRight = await builder.createRight(RightsEnum.CAN_UPLOAD_USER_FILES);
+    const canDoRandomStuffRight = await builder.createRight(
+      RightsEnum.CAN_DO_RANDOM_STUFF,
+    );
+    const canCreateTicketRight = await builder.createRight(
+      RightsEnum.CAN_CREATE_TICKET,
+    );
+    const canUploadUserFileRight = await builder.createRight(
+      RightsEnum.CAN_UPLOAD_USER_FILES,
+    );
 
     // init roles and assign to rights
     const adminRole = await builder.createRole(RoleEnum.ADMIN);
@@ -72,7 +88,11 @@ export class Fixtures {
     await builder.createRoleRight(userRole, canUploadUserFileRight);
 
     // init users with roles
-    const superAdmin = await builder.createUser('superadmin@email.com', 'asdf', 'SuperAdmin');
+    const superAdmin = await builder.createUser(
+      'superadmin@email.com',
+      'asdf',
+      'SuperAdmin',
+    );
     await builder.createUserRole(superAdmin, adminRole);
     await builder.createUserRole(superAdmin, randomRole);
     await builder.createUserRole(superAdmin, userRole);
@@ -83,9 +103,17 @@ export class Fixtures {
     const user = await builder.createUser('user@mail.com', 'asdf', 'User');
     await builder.createUserRole(user, userRole);
 
-    const userWithoutAnyRole = await builder.createUser('user-without-role@mail.com', 'asdf', 'UserWithoutRole');
+    const userWithoutAnyRole = await builder.createUser(
+      'user-without-role@mail.com',
+      'asdf',
+      'UserWithoutRole',
+    );
 
-    const userWithEmptyRole = await builder.createUser('user-empty-role@mail.com', 'asdf', 'UserWithEmptyRole');
+    const userWithEmptyRole = await builder.createUser(
+      'user-empty-role@mail.com',
+      'asdf',
+      'UserWithEmptyRole',
+    );
     await builder.createUserRole(userWithEmptyRole, roleWithoutRights);
 
     // create invoices
@@ -111,12 +139,10 @@ export class Fixtures {
   }
 
   async run(connection: Connection, redisService: RedisService) {
-
     if (process.env.NODE_ENV !== 'dev') {
-        this.logger.error('fixtures: NODE_ENV is not development');
-        throw Error('fixtures(): NODE_ENV is not development',
-        );
-      }
+      this.logger.error('fixtures: NODE_ENV is not development');
+      throw Error('fixtures(): NODE_ENV is not development');
+    }
 
     await this.rebuildDatabases(connection, redisService);
     await this.loadFixtures(connection, redisService);

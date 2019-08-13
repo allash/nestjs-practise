@@ -18,9 +18,7 @@ class TestContext {
 
   public async init() {
     const testModule = await Test.createTestingModule({
-      imports: [
-        AppModule
-      ]
+      imports: [AppModule],
     }).compile();
 
     const expressAdapter = new ExpressAdapter(this.server);

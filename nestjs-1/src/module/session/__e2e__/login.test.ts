@@ -20,7 +20,10 @@ describe('Session Controller', () => {
   });
 
   beforeEach(async () => {
-    await Promise.all([recreateSchema(context.connection), flushRedis(context.app)]);
+    await Promise.all([
+      recreateSchema(context.connection),
+      flushRedis(context.app),
+    ]);
     entityBuilder = await EntityBuilder.create(context.connection);
   });
 
