@@ -34,6 +34,7 @@ describe('User controller', () => {
   });
 
   beforeEach(async () => {
+    jest.setTimeout(10000);
     await Promise.all([
       recreateSchema(context.connection),
       flushRedis(context.app),
