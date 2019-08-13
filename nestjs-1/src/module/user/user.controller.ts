@@ -83,7 +83,7 @@ export class UserController extends BaseController {
     }),
   )
   async uploadFileToDisk(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+    this.logger.log(file.originalname);
   }
 
   @Post('/files/upload')
