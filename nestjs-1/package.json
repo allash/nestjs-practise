@@ -23,6 +23,7 @@
     "test:e2e": "jest --ci --runInBand --forceExit --detectOpenHandles --testRegex src/.*/__e2e__/[^/]+.test.ts",
     "test:e2e-parallel": "jest --ci  --maxWorkers=6 --testRegex src/.*/__e2e__/[^/]+.test.ts",
     "test:chat": "jest --ci  --testRegex src/.*/__e2e__/chat.websocket.test.ts",
+    "test:file": "jest --ci  --testRegex src/.*/__e2e__/upload.user.file.test.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -57,7 +58,8 @@
     "faker": "^4.1.0",
     "pretty-error": "2.1.1",
     "cors": "2.8.5",
-    "helmet": "^3.18.0"
+    "helmet": "^3.18.0",
+    "aws-sdk": "^2.494.0"
   },
   "devDependencies": {
     "@types/check-types": "^7.3.0",
@@ -74,6 +76,7 @@
     "@types/cors": "2.8.5",
     "@types/helmet": "^0.0.43",
     "@types/ws": "6.0.2",
+    "@types/aws-sdk": "^2.7.0",
     "concurrently": "^4.1.0",
     "jest": "24.7.1",
     "jest-sonar-reporter": "^2.0.0",
@@ -85,7 +88,8 @@
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
     "typescript": "^3.5.2",
-    "wait-on": "^3.2.0"
+    "wait-on": "^3.2.0",
+    "aws-sdk-mock": "^4.5.0"
   },
   "jest": {
     "setupFiles": [

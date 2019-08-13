@@ -1,3 +1,5 @@
+import { S3Service } from './../../../utils/s3.service';
+import { UserFileRepository } from './../../db/repositories/user.file.repository';
 import { anything, instance, mock, when } from 'ts-mockito';
 import { UserMapper } from '../user.mapper';
 import { UserRepository } from '../../db/repositories/user.repository';
@@ -9,13 +11,17 @@ describe('user service', () => {
 
     let target: UserService;
     const mockUserRepo = mock(UserRepository);
+    const mockUserFileRepo = mock(UserFileRepository);
+    const mockS3Service = mock(S3Service);
 
     const users = new Array<DbUser>();
 
     beforeAll(() => {
         target = new UserService(
             instance(mockUserRepo),
-            new UserMapper()
+            instance(mockUserFileRepo),
+            new UserMapper(),
+            instance(mockS3Service)
         );
     });
 

@@ -54,6 +54,7 @@ export class Fixtures {
 
     const canDoRandomStuffRight = await builder.createRight(RightsEnum.CAN_DO_RANDOM_STUFF);
     const canCreateTicketRight = await builder.createRight(RightsEnum.CAN_CREATE_TICKET);
+    const canUploadUserFileRight = await builder.createRight(RightsEnum.CAN_UPLOAD_USER_FILES);
 
     // init roles and assign to rights
     const adminRole = await builder.createRole(RoleEnum.ADMIN);
@@ -66,24 +67,25 @@ export class Fixtures {
 
     const roleWithoutRights = await builder.createRole(RoleEnum.EMPTY);
 
-    const userRole = await builder.createRole('USER');
+    const userRole = await builder.createRole(RoleEnum.USER);
     await builder.createRoleRight(userRole, canCreateTicketRight);
+    await builder.createRoleRight(userRole, canUploadUserFileRight);
 
     // init users with roles
-    const superAdmin = await builder.createUser('superadmin@email.com', '1234', 'SuperAdmin');
+    const superAdmin = await builder.createUser('superadmin@email.com', 'asdf', 'SuperAdmin');
     await builder.createUserRole(superAdmin, adminRole);
     await builder.createUserRole(superAdmin, randomRole);
     await builder.createUserRole(superAdmin, userRole);
 
-    const admin = await builder.createUser('admin@mail.com', '1234', 'Admin');
+    const admin = await builder.createUser('admin@mail.com', 'asdf', 'Admin');
     await builder.createUserRole(admin, adminRole);
 
-    const user = await builder.createUser('user@mail.com', '1234', 'User');
+    const user = await builder.createUser('user@mail.com', 'asdf', 'User');
     await builder.createUserRole(user, userRole);
 
-    const userWithoutAnyRole = await builder.createUser('user-without-role@mail.com', '1234', 'UserWithoutRole');
+    const userWithoutAnyRole = await builder.createUser('user-without-role@mail.com', 'asdf', 'UserWithoutRole');
 
-    const userWithEmptyRole = await builder.createUser('user-empty-role@mail.com', '1234', 'UserWithEmptyRole');
+    const userWithEmptyRole = await builder.createUser('user-empty-role@mail.com', 'asdf', 'UserWithEmptyRole');
     await builder.createUserRole(userWithEmptyRole, roleWithoutRights);
 
     // create invoices

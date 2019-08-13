@@ -20,7 +20,6 @@ export class AuthFilterMiddleware implements NestMiddleware {
 
   public async use(req: Request, res: Response, next: NextFunction) {
     const authToken: string = req.headers[AppConstants.X_AUTH_TOKEN] as string;
-
     if (authToken) {
       const userId = await this.redisService.get(authToken);
       if (userId != null) {
