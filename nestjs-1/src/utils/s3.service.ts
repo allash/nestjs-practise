@@ -17,7 +17,7 @@ export class S3Service {
   }
 
   private get params() {
-    return { Bucket: 'local-nestjs-bucket' };
+    return { Bucket: 'nestjs-local' };
   }
 
   public async getObject(fileName: string): Promise<GetObjectOutput> {

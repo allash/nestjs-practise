@@ -15,7 +15,7 @@ jobs:
         environment:
           - SERVICES=s3
           - DEFAULT_REGION=eu-central-1
-          
+
     working_directory: ~/nestjs-practise
 
     steps:
@@ -47,6 +47,12 @@ jobs:
       - run: 
           name: Wait for DB 
           command: dockerize -wait tcp://localhost:8001 -timeout 1m
+
+      - run: 
+          name: Creating S3 bucket for testing
+          command: |
+            cd nestjs-1
+            ./run.s3.bucket.prepare.sh nestjs-local
 
       - run: 
           name: Tests
