@@ -1,4 +1,5 @@
 import { RedisConfig } from './redis.config';
+// tslint:disable-next-line:no-var-requires
 const asyncRedis = require('async-redis');
 
 import { Logger } from '@nestjs/common';
@@ -20,7 +21,9 @@ export const RedisProviders = [
         ? +process.env.JEST_WORKER_ID
         : 0;
 
-      logger.debug(`Creating redis connection with workerId: ${workerId}...`);
+      logger.debug(
+        `Creating RedisKeyStore connection with workerId: ${workerId}...`,
+      );
 
       client = await new Promise((resolve, reject) => {
         let internalClient: any;
@@ -45,7 +48,7 @@ export const RedisProviders = [
         });
 
         internalClient.on('connect', () => {
-          logger.debug('Redis connection successfully created...');
+          logger.debug('RedisKeyStore connection successfully created...');
           resolve(internalClient);
         });
       });

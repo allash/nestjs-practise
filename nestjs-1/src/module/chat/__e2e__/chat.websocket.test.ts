@@ -6,7 +6,7 @@ import * as request from 'supertest';
 import * as WebSocket from 'ws';
 import uuid = require('uuid');
 
-describe.skip('ChatControllerTest', () => {
+describe('ChatControllerTest', () => {
   const API_URL = `/${AppConstants.API_PREFIX}/chat`;
   const WS_URL = 'ws://localhost:8080';
 
@@ -19,7 +19,9 @@ describe.skip('ChatControllerTest', () => {
 
   afterAll(async () => {
     await context.tearDown();
-    ws.close();
+    if (ws) {
+      ws.close();
+    }
   });
 
   describe('ws test', () => {

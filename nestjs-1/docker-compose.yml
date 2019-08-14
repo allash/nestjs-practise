@@ -16,6 +16,12 @@ redis:
   ports:
     - "6379:6379"
   restart: always
+redis_pubsub:
+  image: redis:4.0.8
+  container_name: nestjs_redis_pubsub
+  ports:
+    - "6380:6379"
+  restart: always
 localstack:
   image: localstack/localstack
   container_name: nestjs_localstack

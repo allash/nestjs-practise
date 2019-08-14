@@ -1,5 +1,12 @@
 {
-  "watch": ["dist"],
-  "ext": "js",
-  "exec": "node dist/main"
+  "delay": "0.2",
+  "ext": "js,json,ts",
+  "watch": [
+    "src",
+    "config",
+    "ormconfig.js",
+    "tsconfig.json",
+    "tslint.json",
+    "ormconfig.json"
+  ]
 }

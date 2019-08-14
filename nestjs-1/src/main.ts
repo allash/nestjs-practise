@@ -36,6 +36,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3001;
   logger.log(`App started on port ${port}`);
+
   await app.listen(port);
 }
 

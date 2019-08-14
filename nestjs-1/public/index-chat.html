@@ -1,0 +1,78 @@
+<html>
+
+<head>
+
+<body>
+  <div id="main-chat" style="visibility:hidden"> 
+    <textarea type="text" id="group-chat" rows="30" cols="20"></textarea>
+    <input style="display: block" id="chat-message-box" type="text" onkeydown="return onSendMessage(event)" />
+  </div>
+
+  <br /><br />
+
+  <div id="join-room">
+    <input id="username" type="text" />
+    <button type="button" onclick="return onJoin(event)">Join</button>
+  </div>
+  
+</body>
+<script>
+  let socketId = null;
+
+  async function onJoin(e) {
+      const username = document.getElementById("username").value;
+      await fetch('http://localhost:3001/api/chat/join', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ username, socketId })
+      });
+  }
+
+  async function onSendMessage(e) {
+    if (e.which === 13) {
+      const message = document.getElementById("chat-message-box").value;
+      document.getElementById("chat-message-box").value = '';
+        await fetch('http://localhost:3001/api/chat/send/all', {
+          method: 'POST',
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: JSON.stringify({ message, socketId })
+        });
+    }
+  }
+
+  const socket = new WebSocket('ws://localhost:3001');
+  socket.onopen = function () { 
+    console.log('derp');
+
+    socket.send(JSON.stringify({
+      event: 'chat-handshake'
+    }));
+
+    socket.onmessage = function (packet) {
+      const res = JSON.parse(packet.data);
+      const data = JSON.parse(res.data);
+
+      switch(res.event) {
+        case 'chat-handshake-result':
+          console.log('chat-handshake-result');
+          if (data.socketId) { socketId = data.socketId } 
+          break;
+        case 'chat-join-result': 
+          console.log('chat-join-result');
+          document.getElementById('main-chat').style.visibility = 'visible';
+          document.getElementById('join-room').style.visibility = 'hidden';
+          document.getElementById('group-chat').value += (data.username + ' joined \n');
+          break;
+        case 'chat-message-result':
+          console.log('chat-message-result');
+          document.getElementById('group-chat').value += (data.username + ': ' + data.message + '\n');
+          break;
+      }
+    }
+  }
+</script>
+</head>
+
+<body></body>
+
+</html>

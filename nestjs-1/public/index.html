@@ -3,69 +3,64 @@
 <head>
 
 <body>
-  <div id="main-chat" style="visibility:hidden"> 
-    <textarea type="text" id="group-chat" rows="30" cols="20"></textarea>
-    <input style="display: block" id="chat-message-box" type="text" onkeydown="return onSendMessage(event)" />
-  </div>
-
-  <br /><br />
-
   <div id="join-room">
     <input id="username" type="text" />
     <button type="button" onclick="return onJoin(event)">Join</button>
   </div>
-  
+  <div id="message">
+    <input id="message" type="text" onkeydown="return onSendMessage(event)" />
+  </div>
+  <div id="response" />
 </body>
 <script>
   let socketId = null;
+  let anotherUserSocketId = null;
 
   async function onJoin(e) {
       const username = document.getElementById("username").value;
-      await fetch('http://localhost:3001/api/chat/join', {
+      await fetch('http://localhost:3001/api/chat/pubsub-join', {
         method: 'POST',
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({ username, socketId })
       });
   }
 
-  async function onSendMessage(e) {
-    if (e.which === 13) {
-      const message = document.getElementById("chat-message-box").value;
-      document.getElementById("chat-message-box").value = '';
-        await fetch('http://localhost:3001/api/chat/send/all', {
-          method: 'POST',
-          headers: { "Content-Type": "application/json; charset=utf-8" },
-          body: JSON.stringify({ message, socketId })
-        });
-    }
+  async function onSendMessage() {
+    await fetch('http://localhost:3001/api/chat/pubsub-message', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ username, socketId })
+      });
   }
 
-  const socket = new WebSocket('ws://localhost:3001');
+  const socket = new WebSocket('ws://localhost:8080');
   socket.onopen = function () { 
-    console.log('derp');
 
     socket.send(JSON.stringify({
-      event: 'chat-handshake'
+      event: 'PUBSUB_CHAT_HANDSHAKE_EVENT'
     }));
 
     socket.onmessage = function (packet) {
       const res = JSON.parse(packet.data);
-      const data = JSON.parse(res.data);
 
       switch(res.event) {
-        case 'chat-handshake-result':
-          console.log('chat-handshake-result');
-          if (data.socketId) { socketId = data.socketId } 
+        case 'PUBSUB_CHAT_HANDSHAKE_RESULT':
+          console.log('PUBSUB_CHAT_HANDSHAKE_RESULT');
+          const data = JSON.parse(res.data);
+          if (data.socketId) { 
+            console.log('socketId: ' + data.socketId);
+            console.log(data.users);
+            socketId = data.socketId 
+          } 
           break;
-        case 'chat-join-result': 
-          console.log('chat-join-result');
-          document.getElementById('main-chat').style.visibility = 'visible';
-          document.getElementById('join-room').style.visibility = 'hidden';
-          document.getElementById('group-chat').value += (data.username + ' joined \n');
-          break;
-        case 'chat-message-result':
-          console.log('chat-message-result');
-          document.getElementById('group-chat').value += (data.username + ': ' + data.message + '\n');
+        case 'PUBSUB_CHAT_JOIN_RESULT': 
+          console.log('PUBSUB_CHAT_JOIN_RESULT');
+          console.log('joined: ' + res.data.id);
+          const div = document.getElementById("response");
+          const text = document.createTextNode(res.data.username + ' joined');
+          const br = document.createElement('br');
+          div.appendChild(text)
+          div.appendChild(br);
           break;
       }
     }
