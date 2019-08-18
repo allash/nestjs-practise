@@ -1,9 +1,13 @@
+import { SocketPubSubGateway } from './../../socket/socket.pubsub.gateway';
 import { SocketGateway } from './../../socket/socket.gateway';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ChatService {
-  constructor(private readonly socketGateway: SocketGateway) {}
+  constructor(
+    private readonly socketGateway: SocketGateway,
+    private readonly socketPubSubGateway: SocketPubSubGateway
+    ) {}
 
   public joinChat = (socketId: string, username: string) => {
     this.socketGateway.dispatchUserJoined(socketId, { username });
@@ -14,7 +18,7 @@ export class ChatService {
   }
 
   // PubSub
-  public pubSubJoinChat = (socketId: string, username: string) => {
-    // this.socketGateway.dispatchPubSubUserJoined(socketId, { username });
+  public pubSubSendMessage = (socketId: string, message: string) => {
+    this.socketPubSubGateway.dispatchMessageSend(socketId, { message });
   }
 }

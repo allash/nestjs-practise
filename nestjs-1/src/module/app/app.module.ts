@@ -23,7 +23,7 @@ import { RedisService } from '../redis/redis.service';
     InvoiceModule,
     SessionModule,
     RedisModule,
-    ChatModule,
+    ChatModule
   ],
 })
 export class AppModule implements NestModule {

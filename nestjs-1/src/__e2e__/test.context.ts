@@ -15,6 +15,7 @@ class TestContext {
   public app: INestApplication;
   public connection: Connection;
   public redisClient: any;
+  public redisSub: any;
 
   public async init() {
     const testModule = await Test.createTestingModule({
@@ -31,6 +32,10 @@ class TestContext {
     this.redisClient = await this.app
       .select(RedisModule)
       .get(RedisConstants.REDIS_CONNECTION);
+
+    this.redisSub = await this.app
+      .select(RedisModule)
+      .get(RedisConstants.REDIS_SUB_CONNECTION);
 
     this.connection = await this.app
       .select(DbModule)
@@ -52,6 +57,10 @@ class TestContext {
     }
     if (this.redisClient) {
       await this.redisClient.quit();
+    }
+
+    if (this.redisSub) {
+      await this.redisSub.quit();
     }
   }
 }

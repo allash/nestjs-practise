@@ -7,18 +7,19 @@
     <input id="username" type="text" />
     <button type="button" onclick="return onJoin(event)">Join</button>
   </div>
-  <div id="message">
+  <!-- <div id="message">
     <input id="message" type="text" onkeydown="return onSendMessage(event)" />
-  </div>
+  </div> -->
   <div id="response" />
 </body>
 <script>
   let socketId = null;
   let anotherUserSocketId = null;
+  const socket = new WebSocket('ws://localhost:8080');
 
   async function onJoin(e) {
       const username = document.getElementById("username").value;
-      await fetch('http://localhost:3001/api/chat/pubsub-join', {
+      await fetch('http://localhost:3001/api/chat/join', {
         method: 'POST',
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({ username, socketId })
@@ -26,38 +27,38 @@
   }
 
   async function onSendMessage() {
-    await fetch('http://localhost:3001/api/chat/pubsub-message', {
-        method: 'POST',
-        headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify({ username, socketId })
-      });
-  }
-
-  const socket = new WebSocket('ws://localhost:8080');
-  socket.onopen = function () { 
 
     socket.send(JSON.stringify({
       event: 'PUBSUB_CHAT_HANDSHAKE_EVENT'
     }));
 
-    socket.onmessage = function (packet) {
-      const res = JSON.parse(packet.data);
+    // await fetch('http://localhost:3001/api/chat/pubsub-message', {
+    //     method: 'POST',
+    //     headers: { "Content-Type": "application/json; charset=utf-8" },
+    //     body: JSON.stringify({ username, socketId })
+    //   });
+  }
+  
+  socket.onopen = function () { 
 
-      switch(res.event) {
-        case 'PUBSUB_CHAT_HANDSHAKE_RESULT':
-          console.log('PUBSUB_CHAT_HANDSHAKE_RESULT');
-          const data = JSON.parse(res.data);
-          if (data.socketId) { 
-            console.log('socketId: ' + data.socketId);
-            console.log(data.users);
-            socketId = data.socketId 
+   
+
+    socket.onmessage = function (packet) {
+      const response = JSON.parse(packet.data);
+
+      switch(response.event) {
+        case 'CHAT_HANDSHAKE_RESULT':
+          console.log('CHAT_HANDSHAKE_RESULT');
+          let id = response.data.socketId;
+          if (id) { 
+            socketId = id 
           } 
           break;
-        case 'PUBSUB_CHAT_JOIN_RESULT': 
-          console.log('PUBSUB_CHAT_JOIN_RESULT');
-          console.log('joined: ' + res.data.id);
+        case 'CHAT_JOIN_RESULT': 
+          console.log('CHAT_JOIN_RESULT');
+          console.log('joined: ' + response.data.username);
           const div = document.getElementById("response");
-          const text = document.createTextNode(res.data.username + ' joined');
+          const text = document.createTextNode(response.data.username + ' joined');
           const br = document.createElement('br');
           div.appendChild(text)
           div.appendChild(br);

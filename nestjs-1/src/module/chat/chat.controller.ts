@@ -6,8 +6,7 @@ import {
   Body,
   Post,
   HttpCode,
-  HttpStatus,
-  Get,
+  HttpStatus
 } from '@nestjs/common';
 import { Public } from '../../guards/auth.guard';
 
@@ -33,9 +32,9 @@ export class ChatController extends BaseController {
 
   // PubSub
   @Public()
-  @Post('/pubsub-join')
+  @Post('/pubsub-message')
   @HttpCode(HttpStatus.OK)
-  async pubSubJoin(@Body() req: { socketId: string; username: string }) {
-    this.chatService.pubSubJoinChat(req.socketId, req.username);
+  async pubSsubSendMessage(@Body() req: { socketId: string; message: string }) {
+    this.chatService.sendMessage(req.socketId, req.message);
   }
 }

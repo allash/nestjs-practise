@@ -26,7 +26,7 @@ export class SocketGateway2 {
 
   @SubscribeMessage('ConfigurationResponse')
   public onSendConfigurationResponse(socket: Socket, payload: any) {
-    this.redisPub.publish(`Response_${socket.id}`, JSON.stringify(payload));
+    this.redisPub.publish(`Response_${socket.id}`, JSON.stringify({ event: 'configurationResponse', data: payload }));
   }
 
   public async sendConfigurationRequest(socketId: string, payload: any) {
@@ -43,11 +43,16 @@ export class SocketGateway2 {
           if (topic === 'configurationResponse') {
             resolve(data);
           }
-          // reject on timeout
+          // reject on timeout or error
         });
       } else {
         connection.send(packet);
       }
     });
+  }
+
+  // Service
+  public async sendConfig(socketId: string, payload: string) {
+    await this.sendConfigurationRequest(socketId, payload); // success, failure, timeout
   }
 }
