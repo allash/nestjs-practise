@@ -15,7 +15,7 @@ $ yarn install
 
 ```bash
 # development
-$ yarn start
+$ yarn local
 ```
 
 ## Test
