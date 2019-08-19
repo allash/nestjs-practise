@@ -5,6 +5,7 @@
   "description": "Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
+    "local": "yarn start",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "db:migrate": "ts-node -T ./node_modules/.bin/typeorm migration:run",
     "db:migrate-create": "ts-node -T ./node_modules/.bin/typeorm migration:create",

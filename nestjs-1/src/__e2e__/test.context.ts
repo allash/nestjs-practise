@@ -6,7 +6,7 @@ import { DbModule } from './../module/db/db.module';
 import { Test } from '@nestjs/testing';
 import { Connection } from 'typeorm';
 import * as express from 'express';
-import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { RedisModule } from '../module/redis/redis.module';
 
@@ -16,7 +16,6 @@ class TestContext {
   public connection: Connection;
   public redisClient: any;
   public redisSub: any;
-  private logger = new Logger(TestContext.name);
 
   public async init() {
     const testModule = await Test.createTestingModule({
