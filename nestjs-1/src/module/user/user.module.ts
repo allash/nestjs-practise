@@ -11,5 +11,6 @@ import { S3Service } from '../../utils/s3.service';
   controllers: [UserController],
   providers: [UserService, UserMapper, S3Service],
   imports: [TypeOrmModule.forFeature([UserRepository, UserFileRepository])],
+  exports: [UserService]
 })
 export class UserModule {}

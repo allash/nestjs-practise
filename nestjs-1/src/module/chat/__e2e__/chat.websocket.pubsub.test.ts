@@ -24,8 +24,12 @@ describe('ChatPubSubTest', () => {
 
   afterAll(async () => {
     await context.tearDown();
-    if (ws1) {
+    if (ws1 != null && ws1 !== undefined) {
       ws1.close();
+    }
+
+    if (ws2 != null && ws2 !== undefined) {
+      ws2.close();
     }
   });
 

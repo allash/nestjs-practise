@@ -57,12 +57,10 @@ class TestContext {
       await this.app.close();
     }
     if (this.redisClient) {
-      this.logger.debug('redisClient closed');
       await this.redisClient.quit();
     }
 
     if (this.redisSub) {
-      this.logger.debug('redisSub closed');
       await this.redisSub.quit();
     }
   }

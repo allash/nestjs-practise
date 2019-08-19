@@ -20,10 +20,10 @@ interface ChatUser {
   username: string;
 }
 
+const WEB_SOCKET_PORT = process.env.NODE_ENV === 'test' ? 9100 : 9101;
 const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
-const WEB_SOCKET_PORT = 9100 + workerId;
 
-@WebSocketGateway(WEB_SOCKET_PORT)
+@WebSocketGateway(WEB_SOCKET_PORT + workerId)
 export class SocketPubSubGateway {
   private logger = new Logger(SocketPubSubGateway.name);
   private readonly userConnections: Map<string, UserConnection> = new Map<string, UserConnection>();

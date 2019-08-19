@@ -1,11 +1,13 @@
 import { ChatConstants } from './../module/chat/chat.constants';
-import { Logger } from '@nestjs/common';
+import { Logger, Inject } from '@nestjs/common';
 import {
   WebSocketGateway
 } from '@nestjs/websockets';
 import uuid = require('uuid');
 
 import { Socket } from 'socket.io';
+import { UserService } from '../module/user/user.service';
+import { RedisConstants } from '../module/redis/redis.constants';
 
 interface ChatUserConnection {
   client: Socket;
@@ -16,10 +18,10 @@ interface ChatUser {
   username: string;
 }
 
+const WEB_SOCKET_PORT = process.env.NODE_ENV === 'test' ? 9000 : 9001;
 const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
-const WEB_SOCKET_PORT = 9000 + workerId;
 
-@WebSocketGateway(WEB_SOCKET_PORT)
+@WebSocketGateway(WEB_SOCKET_PORT + workerId)
 export class SocketGateway {
   private logger = new Logger(SocketGateway.name);
   private readonly userConnections: Map<string, ChatUserConnection> = new Map<string, ChatUserConnection>();
@@ -27,6 +29,9 @@ export class SocketGateway {
   private onHandleConnectionError = (err: any) => {
     this.logger.debug(err);
   }
+
+  constructor(@Inject(RedisConstants.REDIS_CONNECTION) private readonly connection: any,
+              private readonly userService: UserService) { }
 
   afterInit() {
     // console.log('SocketGateway. WEB_SOCKET_PORT: ' + WEB_SOCKET_PORT);
