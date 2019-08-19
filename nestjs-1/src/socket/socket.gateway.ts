@@ -16,13 +16,20 @@ interface ChatUser {
   username: string;
 }
 
-@WebSocketGateway(8080)
+const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
+const WEB_SOCKET_PORT = 9000 + workerId;
+
+@WebSocketGateway(WEB_SOCKET_PORT)
 export class SocketGateway {
   private logger = new Logger(SocketGateway.name);
   private readonly userConnections: Map<string, ChatUserConnection> = new Map<string, ChatUserConnection>();
 
   private onHandleConnectionError = (err: any) => {
     this.logger.debug(err);
+  }
+
+  afterInit() {
+    // console.log('SocketGateway. WEB_SOCKET_PORT: ' + WEB_SOCKET_PORT);
   }
 
   handleConnection(client: Socket) {

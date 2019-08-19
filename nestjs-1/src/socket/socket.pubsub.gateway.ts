@@ -9,6 +9,7 @@ import uuid = require('uuid');
 import { RedisProviders } from '../module/redis/redis.providers';
 
 const GROUP_CHAT_TOPIC = 'GROUP_CHAT_TOPIC';
+const USER_CHAT_TOPIC = 'USER_CHAT_TOPIC';
 
 interface UserConnection {
   client: Socket;
@@ -19,7 +20,10 @@ interface ChatUser {
   username: string;
 }
 
-@WebSocketGateway(8082)
+const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
+const WEB_SOCKET_PORT = 9100 + workerId;
+
+@WebSocketGateway(WEB_SOCKET_PORT)
 export class SocketPubSubGateway {
   private logger = new Logger(SocketPubSubGateway.name);
   private readonly userConnections: Map<string, UserConnection> = new Map<string, UserConnection>();
@@ -28,6 +32,7 @@ export class SocketPubSubGateway {
   private redisSub!: any;
 
   async afterInit() {
+    // console.log('SocketPubSubGateway.WEB_SOCKET_PORT: ' + WEB_SOCKET_PORT);
     this.redisPub = await RedisProviders[0].useFactory();
     this.redisSub = await RedisProviders[1].useFactory();
   }
@@ -52,7 +57,7 @@ export class SocketPubSubGateway {
     };
 
     await this.redisSub.subscribe(GROUP_CHAT_TOPIC);
-    await this.redisSub.subscribe(client.id);
+    await this.redisSub.subscribe(`${USER_CHAT_TOPIC}_${client.id}`);
     this.redisSub.on('message', (topic: any, data: any) => {
       this.logger.debug('topic: ' + topic);
       client.send(data);

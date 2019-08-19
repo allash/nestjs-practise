@@ -27,6 +27,7 @@
     "test:chat": "jest --testRegex src/.*/__e2e__/chat.websocket.test.ts",
     "test:chatpub": "jest --testRegex src/.*/__e2e__/chat.websocket.pubsub.test.ts",
     "test:file": "jest --testRegex src/.*/__e2e__/upload.user.file.test.ts",
+    "test:create-user": "jest --testRegex src/.*/__e2e__/create.user.test.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

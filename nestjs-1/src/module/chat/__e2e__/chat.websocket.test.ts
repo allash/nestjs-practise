@@ -6,9 +6,12 @@ import * as request from 'supertest';
 import * as WebSocket from 'ws';
 import uuid = require('uuid');
 
+const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
+
 describe('ChatControllerTest', () => {
   const API_URL = `/${AppConstants.API_PREFIX}/chat`;
-  const WS_URL = 'ws://localhost:8080';
+
+  const WS_URL = `ws://localhost:${9000 + workerId}`;
 
   let context: TestContext;
   let ws: WebSocket;
@@ -28,6 +31,7 @@ describe('ChatControllerTest', () => {
 
   describe('ws test', () => {
     it('expects valid username and message', async () => {
+      // console.log(`WS_URL: ${WS_URL}`);
       const username = uuid.v4();
       const message = uuid.v4();
 

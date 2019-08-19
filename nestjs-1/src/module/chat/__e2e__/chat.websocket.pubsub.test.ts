@@ -6,9 +6,11 @@ import * as request from 'supertest';
 import * as WebSocket from 'ws';
 import uuid = require('uuid');
 
+const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
+
 describe('ChatPubSubTest', () => {
   const API_URL = `/${AppConstants.API_PREFIX}/chat`;
-  const WS_URL = 'ws://localhost:8082';
+  const WS_URL = `ws://localhost:${9100 + workerId}`;
 
   let context: TestContext;
   let ws1: WebSocket;
@@ -29,6 +31,7 @@ describe('ChatPubSubTest', () => {
 
   describe('ws pubsub test', () => {
     it('expects valid username and message', async () => {
+      // console.log(`WS_URL: ${WS_URL}`);
       ws1 = new WebSocket(WS_URL);
       await new Promise(resolve =>
         ws1.on('open', () => {
