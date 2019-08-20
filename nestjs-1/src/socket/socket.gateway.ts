@@ -1,50 +1,72 @@
 import { ChatConstants } from './../module/chat/chat.constants';
-import { Logger } from '@nestjs/common';
+import { Logger, Inject } from '@nestjs/common';
 import {
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-  WsResponse,
+  WebSocketGateway
 } from '@nestjs/websockets';
-import * as WebSocket from 'ws';
 import uuid = require('uuid');
 
-@WebSocketGateway(8080)
+import { Socket } from 'socket.io';
+import { UserService } from '../module/user/user.service';
+import { RedisConstants } from '../module/redis/redis.constants';
+
+interface ChatUserConnection {
+  client: Socket;
+  user?: ChatUser;
+}
+
+interface ChatUser {
+  username: string;
+}
+
+const WEB_SOCKET_PORT = process.env.NODE_ENV === 'test' ? 9000 : 9001;
+const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
+
+@WebSocketGateway(WEB_SOCKET_PORT + workerId)
 export class SocketGateway {
-  @WebSocketServer() public server: any;
   private logger = new Logger(SocketGateway.name);
-  private readonly userConnections: Record<string, ChatUserConnection> = {};
+  private readonly userConnections: Map<string, ChatUserConnection> = new Map<string, ChatUserConnection>();
 
   private onHandleConnectionError = (err: any) => {
     this.logger.debug(err);
-  };
-
-  async handleConnection(client: any) {
-    client.off('error', this.onHandleConnectionError);
-    client.on('error', this.onHandleConnectionError);
   }
 
-  @SubscribeMessage(ChatConstants.EVENT.CHAT_HANDSHAKE_EVENT)
-  public onChatHandshake(client: any, data: any): WsResponse<string> {
-    this.logger.debug('onChatHandshake');
+  constructor(@Inject(RedisConstants.REDIS_CONNECTION) private readonly connection: any,
+              private readonly userService: UserService) { }
+
+  afterInit() {
+    // console.log('SocketGateway. WEB_SOCKET_PORT: ' + WEB_SOCKET_PORT);
+  }
+
+  handleConnection(client: Socket) {
+    client.off('error', this.onHandleConnectionError);
+    client.on('error', this.onHandleConnectionError);
 
     const socketId = uuid.v4();
+    client.id = socketId;
+    this.logger.debug('handleConnection: ' + client.id);
 
-    this.userConnections[socketId] = { client };
+    this.userConnections.set(socketId, { client });
 
-    return {
+    const packet = {
       event: ChatConstants.RESULT.CHAT_HANDSHAKE_RESULT,
-      data: JSON.stringify({ socketId }),
+      data: { socketId }
     };
+    client.send(JSON.stringify(packet));
+  }
+
+  handleDisconnect(client: Socket) {
+    this.logger.debug('handleDisconnect: ' + client.id);
+    this.userConnections.delete(client.id);
   }
 
   public dispatchUserJoined(socketId: string, payload: any) {
     this.logger.debug('dispatchUserJoined');
 
-    const userConnection = this.userConnections[socketId];
+    const userConnection = this.userConnections.get(socketId);
     if (!userConnection) {
       throw new Error(`Socket not connected with clientId: ${socketId}`);
     }
+
     userConnection.user = { username: payload.username };
 
     const packet = {
@@ -57,7 +79,7 @@ export class SocketGateway {
   public dispatchMessageSend(socketId: string, payload: any) {
     this.logger.debug('dispatchMessageSend');
 
-    const userConnection = this.userConnections[socketId];
+    const userConnection = this.userConnections.get(socketId);
     if (!userConnection) {
       throw new Error(`Socket not connected with clientId: ${socketId}`);
     }
@@ -71,13 +93,4 @@ export class SocketGateway {
 
     userConnection.client.send(JSON.stringify(packet));
   }
-}
-
-export interface ChatUserConnection {
-  client: WebSocket;
-  user?: ChatUser;
-}
-
-export interface ChatUser {
-  username: string;
 }

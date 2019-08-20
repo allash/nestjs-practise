@@ -15,5 +15,10 @@
     "object-literal-sort-keys": false,
     "trailing-comma": false
   },
-  "rulesDirectory": []
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+      "src/types/*"
+    ]
+  }
 }

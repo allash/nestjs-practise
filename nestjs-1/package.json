@@ -1,32 +1,27 @@
 {
-  "name": "nest-typescript-starter",
+  "name": "nest-practise-app",
   "private": true,
   "version": "1.0.0",
-  "description": "Nest TypeScript starter repository",
+  "description": "NestJS practise app",
   "license": "MIT",
   "scripts": {
+    "local": "yarn start",
+    "local:fixtures": "FIXTURES=true NODE_ENV=dev ts-node -r tsconfig-paths/register src/main.ts",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "db:migrate": "ts-node -T ./node_modules/.bin/typeorm migration:run",
     "db:migrate-create": "ts-node -T ./node_modules/.bin/typeorm migration:create",
     "db:migrate-generate": "ts-node -T ./node_modules/.bin/typeorm migration:generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "FIXTURES=false NODE_ENV=dev ts-node -r tsconfig-paths/register src/main.ts",
-    "start:inspect": "FIXTURES=false NODE_ENV=dev ts-node --inspect-brk -r tsconfig-paths/register src/main.ts",
-    "start:fixtures": "FIXTURES=true NODE_ENV=dev ts-node -r tsconfig-paths/register src/main.ts",
     "start:dev": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
-    "start:debug": "nodemon --inspect-brk nodemon-debug.json",
     "start:prod-backup": "node dist/main.js",
     "start:prod": "yarn db-migrate && node node_modules/.bin/ts-node -T src/main.ts",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "jest",
     "test:unit": "jest --testRegex src/.*/__unit__/[^/]+.test.ts",
     "test:e2e": "jest --ci --runInBand --forceExit --detectOpenHandles --testRegex src/.*/__e2e__/[^/]+.test.ts",
     "test:e2e-parallel": "jest --ci  --maxWorkers=6 --testRegex src/.*/__e2e__/[^/]+.test.ts",
-    "test:chat": "jest --ci  --testRegex src/.*/__e2e__/chat.websocket.test.ts",
-    "test:file": "jest --ci  --testRegex src/.*/__e2e__/upload.user.file.test.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:sonar": "env TZ='Europe/Berlin' jest --coverage --ci --maxWorkers=6 --testResultsProcessor=\"./node_modules/jest-sonar-reporter\" --coverageReporters=lcov --collectCoverage true --coverageDirectory coverage",
     "build:deptree": "depcruise --exclude '(node_modules|dist|coverage|test|src/migrations)' --output-type dot src | dot -T svg > deptree/dependencygraph.svg",
     "depcruise": "depcruise --exclude '(src/migrations)' -v -- src"
@@ -53,10 +48,12 @@
     "pg": "^7.11.0",
     "pg-connection-string": "^2.1.0",
     "pretty-error": "2.1.1",
+    "redis": "^2.8.0",
     "redis-url": "^1.2.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "2.6.3",
     "rxjs": "6.4.0",
+    "socket.io-redis": "^5.2.0",
     "swagger-ui-express": "^4.0.7",
     "ts-node": "^8.3.0",
     "typeorm": "^0.2.18",
@@ -75,7 +72,9 @@
     "@types/lodash": "^4.14.136",
     "@types/multer": "^1.3.6",
     "@types/node": "11.13.4",
+    "@types/redis": "^2.8.13",
     "@types/socket.io": "^2.1.2",
+    "@types/socket.io-redis": "^1.0.25",
     "@types/supertest": "2.0.7",
     "@types/uuid": "^3.4.5",
     "@types/ws": "6.0.2",
@@ -103,7 +102,8 @@
     "moduleFileExtensions": [
       "js",
       "json",
-      "ts"
+      "ts",
+      "node"
     ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -120,6 +120,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "yarn tslint"
-    ]
+    ],
+    "ignore": "./src/types/*"
   }
 }

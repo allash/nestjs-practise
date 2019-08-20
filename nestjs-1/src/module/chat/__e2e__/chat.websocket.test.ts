@@ -1,17 +1,23 @@
 import { ChatConstants } from './../chat.constants';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, Logger } from '@nestjs/common';
 import { AppConstants } from './../../../config/constants';
 import { TestContext, getContext } from '../../../__e2e__/test.context';
 import * as request from 'supertest';
 import * as WebSocket from 'ws';
 import uuid = require('uuid');
+import { isDefined } from '../../../__test__/helper';
 
-describe.skip('ChatControllerTest', () => {
+const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
+
+describe('ChatControllerTest', () => {
   const API_URL = `/${AppConstants.API_PREFIX}/chat`;
-  const WS_URL = 'ws://localhost:8080';
+
+  const WS_URL = `ws://localhost:${9000 + workerId}`;
 
   let context: TestContext;
   let ws: WebSocket;
+
+  const logger = new Logger('ChatControllerTest');
 
   beforeAll(async () => {
     context = await getContext(true);
@@ -19,45 +25,41 @@ describe.skip('ChatControllerTest', () => {
 
   afterAll(async () => {
     await context.tearDown();
-    ws.close();
+    if (isDefined(ws)) {
+      ws.close();
+    }
   });
 
   describe('ws test', () => {
     it('expects valid username and message', async () => {
-      ws = new WebSocket(WS_URL);
-      await new Promise(resolve =>
-        ws.on('open', () => {
-          resolve();
-        }),
-      );
-
-      ws.send(
-        JSON.stringify({
-          event: ChatConstants.EVENT.CHAT_HANDSHAKE_EVENT,
-        }),
-      );
-
+      // console.log(`WS_URL: ${WS_URL}`);
       const username = uuid.v4();
       const message = uuid.v4();
 
+      ws = new WebSocket(WS_URL);
       const socketId = await new Promise(resolve =>
-        ws.on('message', (packet: any) => {
-          const res = JSON.parse(packet);
-          switch (res.event) {
-            case ChatConstants.RESULT.CHAT_HANDSHAKE_RESULT:
-              const id = JSON.parse(res.data).socketId;
-              expect(id).toBeDefined();
-              resolve(id);
-              break;
-            case ChatConstants.RESULT.CHAT_JOIN_RESULT:
-              expect(username).toEqual(res.data.username);
-              resolve();
-              break;
-            case ChatConstants.RESULT.CHAT_MESSAGE_RESULT:
-              expect(username).toEqual(res.data.username);
-              expect(message).toEqual(res.data.message);
-              break;
-          }
+        ws.on('open', () => {
+          ws.on('message', (packet: any) => {
+            const response = JSON.parse(packet);
+            switch (response.event) {
+              case ChatConstants.RESULT.CHAT_HANDSHAKE_RESULT:
+                logger.debug(ChatConstants.RESULT.CHAT_HANDSHAKE_RESULT);
+                const id = response.data.socketId;
+                expect(id).toBeDefined();
+                resolve(id);
+                break;
+              case ChatConstants.RESULT.CHAT_JOIN_RESULT:
+                logger.debug(ChatConstants.RESULT.CHAT_JOIN_RESULT);
+                expect(username).toEqual(response.data.username);
+                resolve();
+                break;
+              case ChatConstants.RESULT.CHAT_MESSAGE_RESULT:
+                logger.debug(ChatConstants.RESULT.CHAT_MESSAGE_RESULT);
+                expect(username).toEqual(response.data.username);
+                expect(message).toEqual(response.data.message);
+                break;
+            }
+          });
         }),
       );
 

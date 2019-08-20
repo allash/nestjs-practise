@@ -1,7 +1,13 @@
 import { ChatService } from './chat.service';
 import { BaseController } from './../base/base.controller';
 import { AppConstants } from './../../config/constants';
-import { Controller, Body, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  HttpCode,
+  HttpStatus
+} from '@nestjs/common';
 import { Public } from '../../guards/auth.guard';
 
 @Controller(`${AppConstants.API_PREFIX}/chat`)
@@ -21,6 +27,14 @@ export class ChatController extends BaseController {
   @Post('/message')
   @HttpCode(HttpStatus.OK)
   async sendMessage(@Body() req: { socketId: string; message: string }) {
+    this.chatService.sendMessage(req.socketId, req.message);
+  }
+
+  // PubSub
+  @Public()
+  @Post('/pubsub-message')
+  @HttpCode(HttpStatus.OK)
+  async pubSsubSendMessage(@Body() req: { socketId: string; message: string }) {
     this.chatService.sendMessage(req.socketId, req.message);
   }
 }

@@ -9,12 +9,14 @@ import * as express from 'express';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { RedisModule } from '../module/redis/redis.module';
+import { isDefined } from '../__test__/helper';
 
 class TestContext {
   public server: Express.Application = express();
   public app: INestApplication;
   public connection: Connection;
   public redisClient: any;
+  public redisSub: any;
 
   public async init() {
     const testModule = await Test.createTestingModule({
@@ -32,6 +34,10 @@ class TestContext {
       .select(RedisModule)
       .get(RedisConstants.REDIS_CONNECTION);
 
+    this.redisSub = await this.app
+      .select(RedisModule)
+      .get(RedisConstants.REDIS_SUB_CONNECTION);
+
     this.connection = await this.app
       .select(DbModule)
       .get<Connection>(DbConstants.DB_CONNECTION);
@@ -44,14 +50,20 @@ class TestContext {
   }
 
   public async tearDown() {
-    if (this.connection) {
+    if (isDefined(this.connection)) {
       await this.connection.close();
     }
-    if (this.app) {
+
+    if (isDefined(this.app)) {
       await this.app.close();
     }
-    if (this.redisClient) {
+
+    if (isDefined(this.redisClient)) {
       await this.redisClient.quit();
+    }
+
+    if (isDefined(this.redisSub)) {
+      await this.redisSub.quit();
     }
   }
 }

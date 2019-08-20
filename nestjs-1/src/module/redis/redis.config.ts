@@ -1,4 +1,4 @@
-const redisUrl = require('redis-url');
+import { parse } from 'redis-url';
 
 export class RedisConfig {
   public db!: number | null;
@@ -11,7 +11,7 @@ export class RedisConfig {
   constructor() {
     this.url = process.env.REDIS_URL || 'redis://localhost:6379';
 
-    const config = redisUrl.parse(this.url);
+    const config = parse(this.url);
     this.db = config.database || 0;
     this.host = config.hostname || '';
     this.port = config.port || 6379;

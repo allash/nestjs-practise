@@ -13,8 +13,7 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "allowJs": true,
-    "paths": { "*": ["types/*"] },
-    //
+    "paths": { "*": ["./src/types/*"] },
     "noImplicitAny": true,
     "skipLibCheck": true,
     "noEmit": true
