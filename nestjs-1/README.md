@@ -8,7 +8,9 @@ NestJS practise app.
 
 ```bash
 # setup
+$ docker-compose up -d
 $ yarn install
+$ yarn db:migrate-generate
 ```
 
 ## Running the app
