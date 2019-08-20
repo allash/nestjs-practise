@@ -9,6 +9,7 @@ import * as express from 'express';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { RedisModule } from '../module/redis/redis.module';
+import { isDefined } from '../__test__/helper';
 
 class TestContext {
   public server: Express.Application = express();
@@ -49,17 +50,19 @@ class TestContext {
   }
 
   public async tearDown() {
-    if (this.connection) {
+    if (isDefined(this.connection)) {
       await this.connection.close();
     }
-    if (this.app) {
+
+    if (isDefined(this.app)) {
       await this.app.close();
     }
-    if (this.redisClient) {
+
+    if (isDefined(this.redisClient)) {
       await this.redisClient.quit();
     }
 
-    if (this.redisSub) {
+    if (isDefined(this.redisSub)) {
       await this.redisSub.quit();
     }
   }

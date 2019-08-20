@@ -1,7 +1,5 @@
-export function connect(redisUrl: any): any;
-export function createClient(redisUrl: any): any;
-export function parse(url: string): RedisParseResult;
-export class RedisParseResult {
+export function parse(url: string): IRedisParseResult;
+export interface IRedisParseResult {
   database: number;
   hostname: string;
   port: number;

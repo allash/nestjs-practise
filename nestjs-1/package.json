@@ -120,6 +120,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "yarn tslint"
-    ]
+    ],
+    "ignore": "./src/types/*"
   }
 }

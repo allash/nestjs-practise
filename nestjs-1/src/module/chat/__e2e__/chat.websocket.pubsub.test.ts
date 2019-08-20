@@ -1,15 +1,13 @@
 import { ChatConstants } from './../chat.constants';
-import { HttpStatus, Logger } from '@nestjs/common';
-import { AppConstants } from './../../../config/constants';
+import { Logger } from '@nestjs/common';
 import { TestContext, getContext } from '../../../__e2e__/test.context';
-import * as request from 'supertest';
 import * as WebSocket from 'ws';
 import uuid = require('uuid');
+import { isDefined } from '../../../__test__/helper';
 
 const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
 
 describe('ChatPubSubTest', () => {
-  const API_URL = `/${AppConstants.API_PREFIX}/chat`;
   const WS_URL = `ws://localhost:${9100 + workerId}`;
 
   let context: TestContext;
@@ -24,18 +22,17 @@ describe('ChatPubSubTest', () => {
 
   afterAll(async () => {
     await context.tearDown();
-    if (ws1 != null && ws1 !== undefined) {
+    if (isDefined(ws1)) {
       ws1.close();
     }
 
-    if (ws2 != null && ws2 !== undefined) {
+    if (isDefined(ws2)) {
       ws2.close();
     }
   });
 
   describe('ws pubsub test', () => {
     it('expects valid username and message', async () => {
-      // console.log(`WS_URL: ${WS_URL}`);
       ws1 = new WebSocket(WS_URL);
       await new Promise(resolve =>
         ws1.on('open', () => {
@@ -44,7 +41,6 @@ describe('ChatPubSubTest', () => {
       );
 
       const username = uuid.v4();
-      const message = uuid.v4();
 
       const socketId1 = await new Promise(resolve => {
         ws1.on('message', (packet: any) => {
@@ -101,12 +97,6 @@ describe('ChatPubSubTest', () => {
           }
         });
       });
-
-      // // send message
-      // await request(context.server)
-      //   .post(`${API_URL}/pubsub-message`)
-      //   .send({ socketId, message })
-      //   .expect(HttpStatus.OK);
     });
   });
 });

@@ -1,6 +1,6 @@
+import { IRedisClient } from './../../types/async-redis.d';
 import { RedisConfig } from './redis.config';
-// tslint:disable-next-line:no-var-requires
-const asyncRedis = require('async-redis');
+import * as AsyncRedis from 'async-redis';
 
 import { Logger } from '@nestjs/common';
 import { RedisConstants } from './redis.constants';
@@ -18,8 +18,8 @@ const createRedisClient = async (name: string): Promise<any> => {
   );
 
   return new Promise((resolve, reject) => {
-    let internalClient: any;
-    internalClient = asyncRedis.createClient({
+    let internalClient: IRedisClient;
+    internalClient = AsyncRedis.createClient({
       host: config.host,
       port: config.port,
       db: 1 + workerId,

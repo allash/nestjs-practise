@@ -5,6 +5,7 @@ import { TestContext, getContext } from '../../../__e2e__/test.context';
 import * as request from 'supertest';
 import * as WebSocket from 'ws';
 import uuid = require('uuid');
+import { isDefined } from '../../../__test__/helper';
 
 const workerId = process.env.JEST_WORKER_ID ? +process.env.JEST_WORKER_ID : 0;
 
@@ -24,7 +25,7 @@ describe('ChatControllerTest', () => {
 
   afterAll(async () => {
     await context.tearDown();
-    if (ws) {
+    if (isDefined(ws)) {
       ws.close();
     }
   });
